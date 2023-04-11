@@ -1,0 +1,33 @@
+ARG NODE_IMAGE=node:16.19.0-alpine
+ARG APP_PORT=3000
+
+# =====================================
+FROM ${NODE_IMAGE} as builder
+
+WORKDIR /home/app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install --frozen-lockfile
+
+COPY . .
+
+RUN yarn build
+
+FROM ${NODE_IMAGE}
+
+WORKDIR /home/app
+
+COPY --from=builder /home/app/package.json ./
+COPY --from=builder /home/app/yarn.lock ./
+COPY --from=builder /home/app/.env ./
+COPY --from=builder /home/app/dist ./dist
+COPY --from=builder /home/app/public ./public
+
+RUN yarn install --production --silent
+
+ENV NODE_ENV=production
+
+EXPOSE ${APP_PORT}
+
+CMD ["yarn", "start"]

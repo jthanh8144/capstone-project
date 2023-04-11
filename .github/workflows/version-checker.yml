@@ -1,0 +1,19 @@
+name: Check Node package version is auto updated
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check Node Packages
+        run: |
+          chmod +x ./scripts/version-checker.sh
+          ./scripts/version-checker.sh
