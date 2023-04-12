@@ -1,6 +1,13 @@
 import 'dotenv/config'
-import { appProvider, envLoadProvider } from './shared/providers'
-
-envLoadProvider.validate()
-// databaseProvider.initialize()
-appProvider.listen()
+import {
+  appProvider,
+  envLoadProvider,
+  databaseProvider,
+  socketProvider,
+} from './shared/providers'
+;(async () => {
+  envLoadProvider.validate()
+  await databaseProvider.initialize()
+  appProvider.listen()
+  socketProvider.initialize()
+})()
