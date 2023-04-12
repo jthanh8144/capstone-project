@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { DataSource } from 'typeorm'
 import customNamingStrategy from '../../database/naming-strategies/custom-naming-strategy'
 import { environment } from '../constants'

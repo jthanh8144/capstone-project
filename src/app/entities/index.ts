@@ -1,2 +1,6 @@
 export * from './user.entity'
-export * from './comment.entity'
+export * from './friend-request.entity'
+export * from './conservation.entity'
+export * from './participant.entity'
+export * from './conservation-setting.entity'
+export * from './message.entity'

@@ -8,12 +8,18 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm'
-import { Comment } from '.'
+import {
+  Conservation,
+  ConservationSetting,
+  FriendRequest,
+  Message,
+  Participant,
+} from '.'
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
   @Column({ unique: true })
   email: string
@@ -24,11 +30,14 @@ export class User extends BaseEntity {
   @Column({ name: 'full_name', nullable: true })
   fullName: string
 
-  @Column({ type: 'date', nullable: true })
-  birthday: string
-
   @Column({ name: 'avatar_url', nullable: true })
   avatarUrl: string
+
+  @Column({ name: 'is_verified', default: false })
+  isVerified: boolean
+
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean
 
   @CreateDateColumn({
     name: 'created_at',
@@ -45,6 +54,24 @@ export class User extends BaseEntity {
   })
   deletedAt: Date
 
-  @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[]
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.requester)
+  requestedFriendRequests: FriendRequest[]
+
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver)
+  receivedFriendRequests: FriendRequest[]
+
+  @OneToMany(() => Conservation, (conservation) => conservation.creator)
+  conservations: Conservation[]
+
+  @OneToMany(() => Participant, (participant) => participant.user)
+  participants: Participant[]
+
+  @OneToMany(
+    () => ConservationSetting,
+    (conservationSetting) => conservationSetting.user,
+  )
+  conservationSettings: ConservationSetting[]
+
+  @OneToMany(() => Message, (message) => message.sender)
+  messages: Message[]
 }
