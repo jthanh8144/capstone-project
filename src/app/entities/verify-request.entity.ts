@@ -8,18 +8,20 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
-  Index,
 } from 'typeorm'
-import { Conservation, User } from '.'
+import { User } from '.'
+import { VerifyRequestStatusEnum } from '../../shared/constants'
 
-@Entity({ name: 'participants' })
-@Index(['conservationId', 'userId'], { unique: true })
-export class Participant extends BaseEntity {
+@Entity({ name: 'verify_requests' })
+export class VerifyRequest extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ name: 'conservation_id' })
-  conservationId: string
+  @Column({ type: 'enum', enum: VerifyRequestStatusEnum })
+  status: VerifyRequestStatusEnum
+
+  @Column({ name: 'expired_time', type: 'timestamp' })
+  expiredTime: Date
 
   @Column({ name: 'user_id' })
   userId: string
@@ -39,11 +41,7 @@ export class Participant extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => Conservation, (conservation) => conservation.participants)
-  @JoinColumn({ name: 'conservation_id' })
-  conservation: Conservation
-
-  @ManyToOne(() => User, (user) => user.participants)
+  @ManyToOne(() => User, (user) => user.verifyRequests)
   @JoinColumn({ name: 'user_id' })
   user: User
 }

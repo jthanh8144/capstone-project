@@ -9,10 +9,12 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  Index,
 } from 'typeorm'
 import { User, Conservation } from '.'
 
 @Entity({ name: 'conservation_settings' })
+@Index(['userId', 'conservationId'], { unique: true })
 export class ConservationSetting extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string

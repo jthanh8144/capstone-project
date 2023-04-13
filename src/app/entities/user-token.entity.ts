@@ -8,18 +8,16 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
-  Index,
 } from 'typeorm'
-import { Conservation, User } from '.'
+import { User } from '.'
 
-@Entity({ name: 'participants' })
-@Index(['conservationId', 'userId'], { unique: true })
-export class Participant extends BaseEntity {
+@Entity({ name: 'user_tokens' })
+export class UserToken extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ name: 'conservation_id' })
-  conservationId: string
+  @Column({ type: 'text' })
+  token: string
 
   @Column({ name: 'user_id' })
   userId: string
@@ -39,11 +37,7 @@ export class Participant extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => Conservation, (conservation) => conservation.participants)
-  @JoinColumn({ name: 'conservation_id' })
-  conservation: Conservation
-
-  @ManyToOne(() => User, (user) => user.participants)
+  @ManyToOne(() => User, (user) => user.userTokens)
   @JoinColumn({ name: 'user_id' })
   user: User
 }

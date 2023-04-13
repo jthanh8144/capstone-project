@@ -14,6 +14,8 @@ import {
   FriendRequest,
   Message,
   Participant,
+  UserToken,
+  VerifyRequest,
 } from '.'
 
 @Entity({ name: 'users' })
@@ -74,4 +76,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Message, (message) => message.sender)
   messages: Message[]
+
+  @OneToMany(() => UserToken, (userToken) => userToken.user)
+  userTokens: UserToken[]
+
+  @OneToMany(() => VerifyRequest, (verifyRequest) => verifyRequest.user)
+  verifyRequests: VerifyRequest[]
 }

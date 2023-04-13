@@ -1,13 +1,31 @@
-import { IsEmail, IsString, IsOptional } from 'class-validator'
+import {
+  IsEmail,
+  IsString,
+  IsOptional,
+  MinLength,
+  Matches,
+  IsBoolean,
+} from 'class-validator'
+import { passwordRegex } from '../utils'
 
 export class CreateUserDto {
   @IsEmail()
   email: string
 
   @IsString()
+  @MinLength(6)
+  @Matches(passwordRegex, {
+    message: 'Password too weak',
+  })
   password: string
 
   @IsString()
   @IsOptional()
-  fullName: string
+  fullName?: string
+}
+
+export class UpdateUserDto {
+  @IsBoolean()
+  @IsOptional()
+  isVerified?: boolean
 }
