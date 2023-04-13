@@ -15,3 +15,9 @@ export enum MessageTypeEnum {
   video = 'video',
   another = 'another',
 }
+
+export enum VerifyRequestStatusEnum {
+  pending = 'pending',
+  expired = 'expired',
+  done = 'done',
+}

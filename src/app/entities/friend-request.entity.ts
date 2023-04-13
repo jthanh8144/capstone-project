@@ -8,11 +8,13 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm'
 import { User } from '.'
 import { FriendEnum } from '../../shared/constants'
 
 @Entity({ name: 'friend_requests' })
+@Index(['requesterId', 'receiverId'], { unique: true })
 export class FriendRequest extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string

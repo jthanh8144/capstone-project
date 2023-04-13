@@ -8,11 +8,13 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm'
 import { User, Conservation } from '.'
 import { MessageTypeEnum } from '../../shared/constants'
 
 @Entity({ name: 'messages' })
+@Index(['senderId', 'conservationId'])
 export class Message extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string

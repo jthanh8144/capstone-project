@@ -9,6 +9,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  Index,
 } from 'typeorm'
 import { User, Participant, ConservationSetting } from '.'
 import { ConservationEnum } from '../../shared/constants'
@@ -19,6 +20,7 @@ export class Conservation extends BaseEntity {
   id: string
 
   @Column({ name: 'creator_id' })
+  @Index()
   creatorId: string
 
   @Column({ type: 'enum', enum: ConservationEnum })
