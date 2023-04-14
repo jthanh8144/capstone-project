@@ -42,3 +42,8 @@ export class IdDto {
   @IsString()
   id: string
 }
+
+export class SearchDto {
+  @IsString()
+  q: string
+}

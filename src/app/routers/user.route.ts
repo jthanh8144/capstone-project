@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { authenticationMiddleware, validationMiddleware } from '../middlewares'
 import { UserController } from '../controllers'
-import { CheckEmailDto, IdDto } from '../dtos'
+import { CheckEmailDto, IdDto, SearchDto } from '../dtos'
 
 class UserRoute {
   public path = '/users'
@@ -17,10 +17,17 @@ class UserRoute {
   private initializeRoutes() {
     this.router
       .route('/')
-      .get(authenticationMiddleware, this.userController.getUsers)
+      .get(
+        authenticationMiddleware,
+        validationMiddleware(SearchDto, 'query', true),
+        this.userController.getUsers,
+      )
     this.router
       .route('/profile')
       .get(authenticationMiddleware, this.userController.userProfile)
+    this.router
+      .route('/friends')
+      .get(authenticationMiddleware, this.userController.getFriendsList)
     this.router
       .route('/inactive')
       .get(authenticationMiddleware, this.userController.inactiveAccount)
