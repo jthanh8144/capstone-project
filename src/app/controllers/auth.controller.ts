@@ -132,17 +132,18 @@ export class AuthController {
             refreshToken,
           })
         } else {
-          res.status(StatusCodes.OK).json({
-            success: true,
+          res.status(StatusCodes.FORBIDDEN).json({
+            success: false,
             message:
               'Your account is inactive. If you want to active your account, please click this link.',
             link: `${process.env.APP_HOST}/users/active?id=${user.id}`,
           })
         }
       } else {
-        res
-          .status(StatusCodes.UNAUTHORIZED)
-          .json({ message: 'Username or password is incorrect!' })
+        res.status(StatusCodes.UNAUTHORIZED).json({
+          success: false,
+          message: 'Username or password is incorrect!',
+        })
       }
     } catch (error) {
       next(error)

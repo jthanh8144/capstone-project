@@ -38,8 +38,6 @@ class FriendRequestRoute {
         validationMiddleware(CreateFriendRequestDto, 'body', true),
         this.friendRequestController.sendFriendRequest,
       )
-    this.router
-      .route('/')
       .put(
         authenticationMiddleware,
         validationMiddleware(UpdateStatusFriendRequestDto, 'body', true),

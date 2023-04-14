@@ -7,11 +7,13 @@ import cors from 'cors'
 import hpp from 'hpp'
 import path from 'path'
 import { Server } from 'socket.io'
+import { serve, setup } from 'swagger-ui-express'
 
 import { errorMiddleware } from '../../app/middlewares'
 import { logger } from '.'
 import { environment } from '../constants'
 import * as routers from '../../app/routers'
+import swaggerDocument from '../../../swagger.json'
 
 class AppProvider {
   public app: express.Application
@@ -23,6 +25,7 @@ class AppProvider {
 
     this.initializeMiddlewares()
     this.initializeRoutes()
+    this.initializeApiDocs()
     this.initializeNotfoundHandling()
     this.initializeErrorHandling()
   }
@@ -66,6 +69,10 @@ class AppProvider {
 
   private initializeErrorHandling() {
     this.app.use(errorMiddleware)
+  }
+
+  private initializeApiDocs() {
+    this.app.use('/docs', serve, setup(swaggerDocument))
   }
 }
 
