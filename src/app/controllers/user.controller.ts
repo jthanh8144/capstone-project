@@ -2,13 +2,17 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { ILike } from 'typeorm'
 
-import { UserRepository } from '../repositories'
+import dataSource from '../../shared/configs/data-source.config'
+import { FriendRequestRepository, UserRepository } from '../repositories'
 import { AuthRequest } from '../typings'
+import { User } from '../entities'
 
 export class UserController {
   private userRepository: UserRepository
+  private friendRequestRepository: FriendRequestRepository
   constructor() {
     this.userRepository = new UserRepository()
+    this.friendRequestRepository = new FriendRequestRepository()
   }
 
   public getUserByEmail = async (
@@ -98,12 +102,33 @@ export class UserController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
+    const queryRunner = dataSource.createQueryRunner()
     try {
       const { userId } = req
-      await this.userRepository.delete(userId)
+      queryRunner.connect()
+      await queryRunner.startTransaction()
+      await queryRunner.manager.getRepository(User).delete(userId)
+      await queryRunner.commitTransaction()
       res
         .status(StatusCodes.OK)
         .json({ success: true, message: 'Remove account successfully' })
+    } catch (error) {
+      await queryRunner.rollbackTransaction()
+      next(error)
+    }
+  }
+
+  public getFriendsList = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const friends = await this.friendRequestRepository.getFriendsListOfUser(
+        userId,
+      )
+      res.status(StatusCodes.OK).json({ success: true, friends })
     } catch (error) {
       next(error)
     }

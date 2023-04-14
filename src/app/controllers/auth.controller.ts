@@ -17,6 +17,7 @@ import {
 } from '../utils'
 import { JwtResponse } from '../typings'
 import { VerifyRequestStatusEnum } from '../../shared/constants'
+import { sendVerifyEmail } from '../utils'
 
 export class AuthController {
   private userRepository: UserRepository
@@ -44,13 +45,14 @@ export class AuthController {
       } else {
         userData.password = hashPassword(userData.password)
         const savedUser = await this.userRepository.createUser(userData)
-        await this.verifyRequestRepository.save(
+        const verifyRequest = await this.verifyRequestRepository.save(
           this.verifyRequestRepository.create({
             user: savedUser,
             status: VerifyRequestStatusEnum.pending,
             expiredTime: addDays(new Date(), 1),
           }),
         )
+        await sendVerifyEmail(userData.email, verifyRequest.id)
         res.status(StatusCodes.OK).json({
           success: true,
           message:
