@@ -1,8 +1,13 @@
 import dataSource from '../configs/data-source.config'
+import { logger } from './logger.provider'
 
 class DatabaseProvider {
   public async initialize() {
-    await dataSource.initialize()
+    try {
+      await dataSource.initialize()
+    } catch (err) {
+      logger.error('Connect database fail')
+    }
   }
 
   public async close() {

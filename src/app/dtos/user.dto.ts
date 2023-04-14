@@ -28,4 +28,17 @@ export class UpdateUserDto {
   @IsBoolean()
   @IsOptional()
   isVerified?: boolean
+
+  @IsOptional()
+  isActive?: boolean
+}
+
+export class CheckEmailDto {
+  @IsEmail()
+  email: string
+}
+
+export class IdDto {
+  @IsString()
+  id: string
 }
