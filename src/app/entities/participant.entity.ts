@@ -39,11 +39,13 @@ export class Participant extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => Conservation, (conservation) => conservation.participants)
+  @ManyToOne(() => Conservation, (conservation) => conservation.participants, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'conservation_id' })
   conservation: Conservation
 
-  @ManyToOne(() => User, (user) => user.participants)
+  @ManyToOne(() => User, (user) => user.participants, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User
 }

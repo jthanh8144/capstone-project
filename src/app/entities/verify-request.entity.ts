@@ -41,7 +41,7 @@ export class VerifyRequest extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => User, (user) => user.verifyRequests)
+  @ManyToOne(() => User, (user) => user.verifyRequests, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User
 }

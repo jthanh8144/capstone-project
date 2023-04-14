@@ -37,7 +37,7 @@ export class UserToken extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => User, (user) => user.userTokens)
+  @ManyToOne(() => User, (user) => user.userTokens, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User
 }

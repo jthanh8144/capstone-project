@@ -43,11 +43,15 @@ export class FriendRequest extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => User, (user) => user.requestedFriendRequests)
+  @ManyToOne(() => User, (user) => user.requestedFriendRequests, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'requester_id' })
   requester: User
 
-  @ManyToOne(() => User, (user) => user.receivedFriendRequests)
+  @ManyToOne(() => User, (user) => user.receivedFriendRequests, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'receiver_id' })
   receiver: User
 }

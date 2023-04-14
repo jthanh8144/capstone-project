@@ -41,7 +41,7 @@ export class Conservation extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => User, (user) => user.conservations)
+  @ManyToOne(() => User, (user) => user.conservations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'creator_id' })
   creator: User
 

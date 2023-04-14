@@ -49,13 +49,14 @@ export class Message extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => User, (user) => user.messages)
+  @ManyToOne(() => User, (user) => user.messages, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'sender_id' })
   sender: User
 
   @ManyToOne(
     () => Conservation,
     (conservation) => conservation.conservationSettings,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'conservation_id' })
   conservation: Conservation

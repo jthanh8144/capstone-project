@@ -108,22 +108,35 @@ export class AuthController {
       const { email, password }: LoginDto = req.body
       const user = await this.userRepository.findOne({
         where: { email },
+        select: ['id', 'email', 'password', 'isActive'],
       })
       if (user && comparePassword(password, user.password)) {
-        const data = {
-          userId: user.id,
-          email,
+        if (user.isActive) {
+          const data = {
+            userId: user.id,
+            email,
+          }
+          const refreshToken = getToken(data, true)
+          await this.userTokenRepository.save(
+            this.userTokenRepository.create({
+              token: refreshToken,
+              userId: user.id,
+            }),
+          )
+          res.status(StatusCodes.OK).json({
+            userId: user.id,
+            email,
+            accessToken: getToken(data),
+            refreshToken,
+          })
+        } else {
+          res.status(StatusCodes.OK).json({
+            success: true,
+            message:
+              'Your account is inactive. If you want to active your account, please click this link.',
+            link: `${process.env.APP_HOST}/users/active?id=${user.id}`,
+          })
         }
-        const refreshToken = getToken(data, true)
-        await this.userTokenRepository.save(
-          this.userTokenRepository.create({ token: refreshToken, user }),
-        )
-        res.status(StatusCodes.OK).json({
-          userId: user.id,
-          email,
-          accessToken: getToken(data),
-          refreshToken,
-        })
       } else {
         res
           .status(StatusCodes.UNAUTHORIZED)
