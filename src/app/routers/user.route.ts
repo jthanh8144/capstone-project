@@ -22,6 +22,7 @@ class UserRoute {
         validationMiddleware(SearchDto, 'query', true),
         this.userController.getUsers,
       )
+      .delete(authenticationMiddleware, this.userController.removeAccount)
     this.router
       .route('/profile')
       .get(authenticationMiddleware, this.userController.userProfile)
@@ -43,9 +44,6 @@ class UserRoute {
         validationMiddleware(CheckEmailDto, 'body', true),
         this.userController.getUserByEmail,
       )
-    this.router
-      .route('/')
-      .delete(authenticationMiddleware, this.userController.removeAccount)
   }
 }
 

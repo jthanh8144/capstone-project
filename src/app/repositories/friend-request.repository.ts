@@ -23,6 +23,7 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
 
   public getSendedFriendRequest(userId: string) {
     return this.createQueryBuilder('friendRequest')
+      .leftJoinAndSelect('friendRequest.receiver', 'receiver')
       .where('friendRequest.requesterId = :userId')
       .andWhere('friendRequest.status != :status')
       .setParameters({ userId, status: FriendEnum.accepted })
@@ -31,6 +32,7 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
 
   public getReceivedFriendRequest(userId: string) {
     return this.createQueryBuilder('friendRequest')
+      .leftJoinAndSelect('friendRequest.requester', 'requester')
       .where('friendRequest.receiverId = :userId')
       .andWhere('friendRequest.status != :status')
       .setParameters({ userId, status: FriendEnum.accepted })
