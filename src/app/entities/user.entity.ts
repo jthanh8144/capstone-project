@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm'
 import {
   Conservation,
@@ -24,6 +25,7 @@ export class User extends BaseEntity {
   id: string
 
   @Column({ unique: true })
+  @Index({ unique: true })
   email: string
 
   @Column({ select: false })

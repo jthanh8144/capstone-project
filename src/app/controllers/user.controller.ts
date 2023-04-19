@@ -6,6 +6,8 @@ import dataSource from '../../shared/configs/data-source.config'
 import { FriendRequestRepository, UserRepository } from '../repositories'
 import { AuthRequest } from '../typings'
 import { User } from '../entities'
+import { RemoveUserDto, UpdatePasswordDto, UpdateUserDto } from '../dtos'
+import { comparePassword, hashPassword } from '../utils'
 
 export class UserController {
   private userRepository: UserRepository
@@ -104,14 +106,22 @@ export class UserController {
   ): Promise<void> => {
     const queryRunner = dataSource.createQueryRunner()
     try {
-      const { userId } = req
-      queryRunner.connect()
-      await queryRunner.startTransaction()
-      await queryRunner.manager.getRepository(User).delete(userId)
-      await queryRunner.commitTransaction()
-      res
-        .status(StatusCodes.OK)
-        .json({ success: true, message: 'Remove account successfully' })
+      const { userId, email } = req
+      const { password }: RemoveUserDto = req.body
+      const user = await this.userRepository.getUserIncludePassword(email)
+      if (comparePassword(password, user.password)) {
+        queryRunner.connect()
+        await queryRunner.startTransaction()
+        await queryRunner.manager.getRepository(User).delete(userId)
+        await queryRunner.commitTransaction()
+        res
+          .status(StatusCodes.OK)
+          .json({ success: true, message: 'Remove account successfully' })
+      } else {
+        res
+          .status(StatusCodes.OK)
+          .json({ success: false, message: 'Password is incorrect' })
+      }
     } catch (error) {
       await queryRunner.rollbackTransaction()
       next(error)
@@ -129,6 +139,49 @@ export class UserController {
         userId,
       )
       res.status(StatusCodes.OK).json({ success: true, friends })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public updateProfile = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const { fullName }: UpdateUserDto = req.body
+      await this.userRepository.updateUser(userId, { fullName })
+      res
+        .status(StatusCodes.OK)
+        .json({ success: true, message: 'Update profile success' })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public changePassword = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { email } = req
+      const { oldPassword, newPassword }: UpdatePasswordDto = req.body
+      const user = await this.userRepository.getUserIncludePassword(email)
+      if (comparePassword(oldPassword, user.password)) {
+        await this.userRepository.updateUser(user.id, {
+          password: hashPassword(newPassword),
+        })
+        res
+          .status(StatusCodes.OK)
+          .json({ success: true, message: 'Update password success' })
+      } else {
+        res
+          .status(StatusCodes.OK)
+          .json({ success: false, message: 'Old password is incorrect' })
+      }
     } catch (error) {
       next(error)
     }

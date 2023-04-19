@@ -1,7 +1,14 @@
 import { Router } from 'express'
 import { authenticationMiddleware, validationMiddleware } from '../middlewares'
 import { UserController } from '../controllers'
-import { CheckEmailDto, IdDto, SearchDto } from '../dtos'
+import {
+  CheckEmailDto,
+  IdDto,
+  RemoveUserDto,
+  SearchDto,
+  UpdatePasswordDto,
+  UpdateUserDto,
+} from '../dtos'
 
 class UserRoute {
   public path = '/users'
@@ -22,10 +29,26 @@ class UserRoute {
         validationMiddleware(SearchDto, 'query', true),
         this.userController.getUsers,
       )
-      .delete(authenticationMiddleware, this.userController.removeAccount)
+      .put(
+        authenticationMiddleware,
+        validationMiddleware(RemoveUserDto, 'body', true),
+        this.userController.removeAccount,
+      )
     this.router
       .route('/profile')
       .get(authenticationMiddleware, this.userController.userProfile)
+      .put(
+        authenticationMiddleware,
+        validationMiddleware(UpdateUserDto, 'body', true),
+        this.userController.updateProfile,
+      )
+    this.router
+      .route('/password')
+      .put(
+        authenticationMiddleware,
+        validationMiddleware(UpdatePasswordDto, 'body', true),
+        this.userController.changePassword,
+      )
     this.router
       .route('/friends')
       .get(authenticationMiddleware, this.userController.getFriendsList)
