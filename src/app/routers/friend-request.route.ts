@@ -35,19 +35,19 @@ class FriendRequestRoute {
       .route('/')
       .post(
         authenticationMiddleware,
-        validationMiddleware(CreateFriendRequestDto, 'body', true),
+        validationMiddleware(CreateFriendRequestDto, 'body'),
         this.friendRequestController.sendFriendRequest,
       )
       .put(
         authenticationMiddleware,
-        validationMiddleware(UpdateStatusFriendRequestDto, 'body', true),
+        validationMiddleware(UpdateStatusFriendRequestDto, 'body'),
         this.friendRequestController.updateReceivedFriendRequest,
       )
     this.router
       .route('/:id')
       .delete(
         authenticationMiddleware,
-        validationMiddleware(IdDto, 'params', true),
+        validationMiddleware(IdDto, 'params'),
         this.friendRequestController.removeSendedFriendRequest,
       )
   }

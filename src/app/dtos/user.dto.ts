@@ -25,7 +25,12 @@ export class CreateUserDto {
 
 export class UpdateUserDto {
   @IsString()
-  fullName: string
+  @IsOptional()
+  fullName?: string
+
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string
 }
 
 export class CheckEmailDto {

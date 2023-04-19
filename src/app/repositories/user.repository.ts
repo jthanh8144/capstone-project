@@ -8,6 +8,7 @@ type UpdateUserType = {
   isActive?: boolean
   fullName?: string
   password?: string
+  avatarUrl?: string
 }
 
 export class UserRepository extends Repository<User> {

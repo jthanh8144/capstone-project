@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { HomeController } from '../controllers'
+import { validationMiddleware } from '../middlewares'
+import { PresignedUrlDto } from '../dtos'
 
 class HomeRoute {
   public path = '/'
@@ -14,6 +16,12 @@ class HomeRoute {
 
   private initializeRoutes() {
     this.router.route('/').get(this.homeController.home)
+    this.router
+      .route('/presigned-url')
+      .get(
+        validationMiddleware(PresignedUrlDto, 'query'),
+        this.homeController.getPresignedUrl,
+      )
   }
 }
 

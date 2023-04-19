@@ -25,44 +25,38 @@ class AuthRoute {
     this.router
       .route('/register')
       .post(
-        validationMiddleware(CreateUserDto, 'body', true),
+        validationMiddleware(CreateUserDto, 'body'),
         this.authController.register,
       )
     this.router
       .route('/login')
-      .post(
-        validationMiddleware(LoginDto, 'body', true),
-        this.authController.login,
-      )
+      .post(validationMiddleware(LoginDto, 'body'), this.authController.login)
     this.router
       .route('/refresh-token')
       .post(
-        validationMiddleware(RefreshTokenDto, 'body', true),
+        validationMiddleware(RefreshTokenDto, 'body'),
         this.authController.refreshToken,
       )
     this.router
       .route('/logout')
       .post(
         authenticationMiddleware,
-        validationMiddleware(RefreshTokenDto, 'body', true),
+        validationMiddleware(RefreshTokenDto, 'body'),
         this.authController.logout,
       )
     this.router
       .route('/verify')
-      .get(
-        validationMiddleware(VerifyDto, 'query', true),
-        this.authController.verify,
-      )
+      .get(validationMiddleware(VerifyDto, 'query'), this.authController.verify)
     this.router
       .route('/request-reset-password')
       .post(
-        validationMiddleware(SendRequestResetPasswordDto, 'body', true),
+        validationMiddleware(SendRequestResetPasswordDto, 'body'),
         this.authController.sendRequestResetPassword,
       )
     this.router
       .route('/reset-password')
       .post(
-        validationMiddleware(ResetPasswordDto, 'body', true),
+        validationMiddleware(ResetPasswordDto, 'body'),
         this.authController.resetPassword,
       )
   }
