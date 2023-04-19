@@ -26,12 +26,12 @@ class UserRoute {
       .route('/')
       .get(
         authenticationMiddleware,
-        validationMiddleware(SearchDto, 'query', true),
+        validationMiddleware(SearchDto, 'query'),
         this.userController.getUsers,
       )
       .put(
         authenticationMiddleware,
-        validationMiddleware(RemoveUserDto, 'body', true),
+        validationMiddleware(RemoveUserDto, 'body'),
         this.userController.removeAccount,
       )
     this.router
@@ -39,14 +39,14 @@ class UserRoute {
       .get(authenticationMiddleware, this.userController.userProfile)
       .put(
         authenticationMiddleware,
-        validationMiddleware(UpdateUserDto, 'body', true),
+        validationMiddleware(UpdateUserDto, 'body'),
         this.userController.updateProfile,
       )
     this.router
       .route('/password')
       .put(
         authenticationMiddleware,
-        validationMiddleware(UpdatePasswordDto, 'body', true),
+        validationMiddleware(UpdatePasswordDto, 'body'),
         this.userController.changePassword,
       )
     this.router
@@ -58,13 +58,13 @@ class UserRoute {
     this.router
       .route('/active')
       .get(
-        validationMiddleware(IdDto, 'query', true),
+        validationMiddleware(IdDto, 'query'),
         this.userController.activeAccount,
       )
     this.router
       .route('/check-email')
       .post(
-        validationMiddleware(CheckEmailDto, 'body', true),
+        validationMiddleware(CheckEmailDto, 'body'),
         this.userController.getUserByEmail,
       )
   }

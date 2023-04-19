@@ -151,8 +151,8 @@ export class UserController {
   ): Promise<void> => {
     try {
       const { userId } = req
-      const { fullName }: UpdateUserDto = req.body
-      await this.userRepository.updateUser(userId, { fullName })
+      const data: UpdateUserDto = req.body
+      await this.userRepository.updateUser(userId, { ...data })
       res
         .status(StatusCodes.OK)
         .json({ success: true, message: 'Update profile success' })

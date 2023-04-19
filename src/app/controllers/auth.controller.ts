@@ -121,7 +121,6 @@ export class AuthController {
     try {
       const { email, password }: LoginDto = req.body
       const user = await this.userRepository.getUserIncludePassword(email)
-      console.log(user)
       if (user && comparePassword(password, user.password)) {
         if (user.isActive) {
           const data = {
