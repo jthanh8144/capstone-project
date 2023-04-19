@@ -1,11 +1,19 @@
 import { StatusCodes } from 'http-status-codes'
 import { NextFunction, Request, Response } from 'express'
 import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
+import { generate } from 'generate-password'
 
-import { CreateUserDto, LoginDto, RefreshTokenDto } from '../dtos'
+import {
+  CreateUserDto,
+  LoginDto,
+  RefreshTokenDto,
+  ResetPasswordDto,
+  SendRequestResetPasswordDto,
+} from '../dtos'
 import {
   UserRepository,
   UserTokenRepository,
+  VerifyCodeRepository,
   VerifyRequestRepository,
 } from '../repositories'
 import {
@@ -14,6 +22,8 @@ import {
   getToken,
   verifyToken,
   addDays,
+  sendVerifyCode,
+  sendResetPassword,
 } from '../utils'
 import { JwtResponse } from '../typings'
 import { VerifyRequestStatusEnum } from '../../shared/constants'
@@ -23,11 +33,13 @@ export class AuthController {
   private userRepository: UserRepository
   private userTokenRepository: UserTokenRepository
   private verifyRequestRepository: VerifyRequestRepository
+  private verifyCodeRepository: VerifyCodeRepository
 
   constructor() {
     this.userRepository = new UserRepository()
     this.userTokenRepository = new UserTokenRepository()
     this.verifyRequestRepository = new VerifyRequestRepository()
+    this.verifyCodeRepository = new VerifyCodeRepository()
   }
 
   public register = async (
@@ -108,10 +120,8 @@ export class AuthController {
   ): Promise<void> => {
     try {
       const { email, password }: LoginDto = req.body
-      const user = await this.userRepository.findOne({
-        where: { email },
-        select: ['id', 'email', 'password', 'isActive'],
-      })
+      const user = await this.userRepository.getUserIncludePassword(email)
+      console.log(user)
       if (user && comparePassword(password, user.password)) {
         if (user.isActive) {
           const data = {
@@ -140,7 +150,7 @@ export class AuthController {
           })
         }
       } else {
-        res.status(StatusCodes.UNAUTHORIZED).json({
+        res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: 'Username or password is incorrect!',
         })
@@ -190,6 +200,81 @@ export class AuthController {
       res
         .status(StatusCodes.OK)
         .json({ success: true, message: 'Logout successfully' })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public sendRequestResetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { email }: SendRequestResetPasswordDto = req.body
+      const user = await this.userRepository.getUserIncludePassword(email)
+      if (user) {
+        const code = generate({
+          length: 6,
+          numbers: true,
+          lowercase: false,
+          uppercase: false,
+        })
+        await Promise.all([
+          this.verifyCodeRepository.save(
+            this.verifyCodeRepository.create({
+              email,
+              code,
+              expiredTime: addDays(new Date(), 1),
+            }),
+          ),
+          sendVerifyCode(email, code),
+        ])
+      }
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message:
+          'If the entered email is matched, a verify code will be send to your email.',
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public resetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { email, code }: ResetPasswordDto = req.body
+      const [user, request] = await Promise.all([
+        this.userRepository.getUserIncludePassword(email),
+        await this.verifyCodeRepository.findOne({
+          where: { email, code, isUsed: false },
+        }),
+      ])
+      if (user && request && request.expiredTime >= new Date()) {
+        const newPassword =
+          generate({
+            length: 9,
+            numbers: true,
+            uppercase: true,
+            lowercase: true,
+          }) + '!'
+        request.isUsed = true
+        await Promise.all([
+          this.userRepository.updateUser(user.id, {
+            password: hashPassword(newPassword),
+          }),
+          this.verifyCodeRepository.save(request),
+          sendResetPassword(email, newPassword),
+        ])
+      }
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: `If the entered email and verify code are matched and the request isn't expire, new password will be send to your email.`,
+      })
     } catch (error) {
       next(error)
     }

@@ -4,7 +4,6 @@ import {
   IsOptional,
   MinLength,
   Matches,
-  IsBoolean,
 } from 'class-validator'
 import { passwordRegex } from '../utils'
 
@@ -25,12 +24,8 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
-  @IsBoolean()
-  @IsOptional()
-  isVerified?: boolean
-
-  @IsOptional()
-  isActive?: boolean
+  @IsString()
+  fullName: string
 }
 
 export class CheckEmailDto {
@@ -46,4 +41,29 @@ export class IdDto {
 export class SearchDto {
   @IsString()
   q: string
+}
+
+export class UpdatePasswordDto {
+  @IsString()
+  @MinLength(6)
+  @Matches(passwordRegex, {
+    message: 'Password too weak',
+  })
+  oldPassword: string
+
+  @IsString()
+  @MinLength(6)
+  @Matches(passwordRegex, {
+    message: 'Password too weak',
+  })
+  newPassword: string
+}
+
+export class RemoveUserDto {
+  @IsString()
+  @MinLength(6)
+  @Matches(passwordRegex, {
+    message: 'Password too weak',
+  })
+  password: string
 }

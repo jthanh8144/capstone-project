@@ -22,3 +22,16 @@ export class VerifyDto {
   @IsString()
   id: string
 }
+
+export class SendRequestResetPasswordDto {
+  @IsEmail()
+  email: string
+}
+
+export class ResetPasswordDto {
+  @IsEmail()
+  email: string
+
+  @IsString()
+  code: string
+}

@@ -1,6 +1,13 @@
 import { Router } from 'express'
-import { CreateUserDto, LoginDto, RefreshTokenDto, VerifyDto } from '../dtos'
-import { validationMiddleware } from '../middlewares'
+import {
+  CreateUserDto,
+  LoginDto,
+  RefreshTokenDto,
+  SendRequestResetPasswordDto,
+  ResetPasswordDto,
+  VerifyDto,
+} from '../dtos'
+import { authenticationMiddleware, validationMiddleware } from '../middlewares'
 import { AuthController } from '../controllers'
 
 class AuthRoute {
@@ -36,6 +43,7 @@ class AuthRoute {
     this.router
       .route('/logout')
       .post(
+        authenticationMiddleware,
         validationMiddleware(RefreshTokenDto, 'body', true),
         this.authController.logout,
       )
@@ -44,6 +52,18 @@ class AuthRoute {
       .get(
         validationMiddleware(VerifyDto, 'query', true),
         this.authController.verify,
+      )
+    this.router
+      .route('/request-reset-password')
+      .post(
+        validationMiddleware(SendRequestResetPasswordDto, 'body', true),
+        this.authController.sendRequestResetPassword,
+      )
+    this.router
+      .route('/reset-password')
+      .post(
+        validationMiddleware(ResetPasswordDto, 'body', true),
+        this.authController.resetPassword,
       )
   }
 }
