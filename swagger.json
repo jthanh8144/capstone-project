@@ -21,6 +21,10 @@
   ],
   "tags": [
     {
+      "name": "general",
+      "description": "API general"
+    },
+    {
       "name": "auth",
       "description": "API for authentication features"
     },
@@ -34,6 +38,95 @@
     }
   ],
   "paths": {
+    "/presigned-url": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Get presigned url for upload file",
+        "description": "Search users",
+        "operationId": "presignedUrl",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "type of file",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "folder",
+            "in": "query",
+            "description": "name of saved file folder",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "presignedUrl": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "presignedUrl",
+                    "url"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/auth/register": {
       "post": {
         "tags": [
@@ -446,7 +539,7 @@
         "tags": [
           "auth"
         ],
-        "summary": "Logout",
+        "summary": "Request reset password",
         "description": "Remove refresh token save in database",
         "operationId": "requestResetPassword",
         "requestBody": {
@@ -514,7 +607,7 @@
         "tags": [
           "auth"
         ],
-        "summary": "Logout",
+        "summary": "Reset password",
         "description": "Remove refresh token save in database",
         "operationId": "resetPassword",
         "requestBody": {
@@ -792,13 +885,14 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "fullName"
-                ],
                 "properties": {
                   "fullName": {
                     "type": "string",
-                    "example": "Vo Van Thanh"
+                    "example": "Optional"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "example": "Optional"
                   }
                 }
               }
@@ -868,12 +962,15 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "fullName"
+                  "oldPassword",
+                  "newPassword"
                 ],
                 "properties": {
-                  "fullName": {
-                    "type": "string",
-                    "example": "Vo Van Thanh"
+                  "oldPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
                   }
                 }
               }
