@@ -30,7 +30,7 @@ export class HomeController {
         5 * 60,
       )
       res.status(StatusCodes.OK).json({
-        presignedUrl,
+        presignedUrl: presignedUrl.replace('http', 'https'),
         url: `https://${process.env.MINIO_HOST}/${
           process.env.BUCKET_NAME || 'safe-talk'
         }/${location}`,

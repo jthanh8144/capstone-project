@@ -67,6 +67,9 @@ class UserRoute {
         validationMiddleware(CheckEmailDto, 'body'),
         this.userController.getUserByEmail,
       )
+    this.router
+      .route('/conservations')
+      .get(authenticationMiddleware, this.userController.getConservationsOfUser)
   }
 }
 

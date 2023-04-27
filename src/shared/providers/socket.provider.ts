@@ -4,14 +4,15 @@ import { socket } from '.'
 class SocketProvider {
   public initialize() {
     socket.on('connection', (sk: Socket) => {
-      console.log('Socket connected')
+      console.log('Socket connected', sk.id)
+      const { roomId } = sk.handshake.query
+      if (typeof roomId === 'string') {
+        sk.join(roomId)
+      }
 
       sk.on('disconnect', () => {
-        console.log('Socket connected')
-      })
-
-      sk.on('message', (data) => {
-        socket.emit('selecting', data)
+        console.log('Socket disconnected')
+        sk.disconnect()
       })
     })
   }
