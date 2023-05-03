@@ -35,7 +35,12 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
       .leftJoinAndSelect('friendRequest.requester', 'requester')
       .where('friendRequest.receiverId = :userId')
       .andWhere('friendRequest.status != :status')
-      .setParameters({ userId, status: FriendEnum.accepted })
+      .andWhere('friendRequest.status != :declined')
+      .setParameters({
+        userId,
+        status: FriendEnum.accepted,
+        declined: FriendEnum.declined,
+      })
       .getMany()
   }
 

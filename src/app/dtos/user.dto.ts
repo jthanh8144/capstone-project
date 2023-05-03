@@ -38,11 +38,6 @@ export class CheckEmailDto {
   email: string
 }
 
-export class IdDto {
-  @IsString()
-  id: string
-}
-
 export class SearchDto {
   @IsString()
   q: string

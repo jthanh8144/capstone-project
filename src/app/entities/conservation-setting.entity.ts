@@ -8,7 +8,6 @@ import {
   DeleteDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
   Index,
 } from 'typeorm'
 import { User, Conservation } from '.'
@@ -28,7 +27,7 @@ export class ConservationSetting extends BaseEntity {
   @Column({ name: 'is_archived', default: false })
   isArchived: boolean
 
-  @Column({ name: 'aut_remove_after', default: 0 })
+  @Column({ name: 'auto_remove_after', default: 30 })
   autoRemoveAfter: number
 
   @Column({ name: 'user_id' })
@@ -58,9 +57,13 @@ export class ConservationSetting extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User
 
-  @OneToMany(
+  @ManyToOne(
     () => Conservation,
     (conservation) => conservation.conservationSettings,
+    {
+      onDelete: 'CASCADE',
+    },
   )
-  conservation: Conservation[]
+  @JoinColumn({ name: 'conservation_id' })
+  conservation: Conservation
 }

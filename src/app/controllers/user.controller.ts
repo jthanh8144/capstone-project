@@ -8,10 +8,12 @@ import { AuthRequest } from '../typings'
 import { User } from '../entities'
 import { RemoveUserDto, UpdatePasswordDto, UpdateUserDto } from '../dtos'
 import { comparePassword, hashPassword } from '../utils'
+import { handleUserConservations } from '../helpers/response.helper'
 
 export class UserController {
   private userRepository: UserRepository
   private friendRequestRepository: FriendRequestRepository
+
   constructor() {
     this.userRepository = new UserRepository()
     this.friendRequestRepository = new FriendRequestRepository()
@@ -182,6 +184,25 @@ export class UserController {
           .status(StatusCodes.OK)
           .json({ success: false, message: 'Old password is incorrect' })
       }
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public getConservationsOfUser = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const conservations = await this.userRepository.getConservationsOfUser(
+        userId,
+      )
+      res.status(StatusCodes.OK).json({
+        success: true,
+        conservations: handleUserConservations(conservations, userId),
+      })
     } catch (error) {
       next(error)
     }

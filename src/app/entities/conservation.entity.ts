@@ -11,7 +11,7 @@ import {
   OneToMany,
   Index,
 } from 'typeorm'
-import { User, Participant, ConservationSetting } from '.'
+import { User, Participant, ConservationSetting, Message } from '.'
 import { ConservationEnum } from '../../shared/constants'
 
 @Entity({ name: 'conservations' })
@@ -47,6 +47,9 @@ export class Conservation extends BaseEntity {
 
   @OneToMany(() => Participant, (participant) => participant.conservation)
   participants: Participant[]
+
+  @OneToMany(() => Message, (message) => message.conservation)
+  messages: Message[]
 
   @OneToMany(
     () => ConservationSetting,
