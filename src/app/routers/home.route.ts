@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { HomeController } from '../controllers'
 import { validationMiddleware, authenticationMiddleware } from '../middlewares'
-import { PresignedUrlDto } from '../dtos'
+import { GetDeviceId, PresignedUrlDto } from '../dtos'
 
 class HomeRoute {
   public path = '/'
@@ -22,6 +22,12 @@ class HomeRoute {
         authenticationMiddleware,
         validationMiddleware(PresignedUrlDto, 'query'),
         this.homeController.getPresignedUrl,
+      )
+    this.router
+      .route('/devices')
+      .get(
+        validationMiddleware(GetDeviceId, 'query'),
+        this.homeController.getDeviceId,
       )
   }
 }

@@ -16,6 +16,11 @@ export enum MessageTypeEnum {
   another = 'another',
 }
 
+export enum MessageEncryptTypeEnum {
+  one = 1,
+  three = 3,
+}
+
 export enum VerifyRequestStatusEnum {
   pending = 'pending',
   expired = 'expired',

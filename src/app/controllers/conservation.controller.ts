@@ -1,7 +1,11 @@
 import { NextFunction, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 
-import { LIMIT_CHAT_SELECTED, MessageTypeEnum } from '../../shared/constants'
+import {
+  LIMIT_CHAT_SELECTED,
+  MessageEncryptTypeEnum,
+  MessageTypeEnum,
+} from '../../shared/constants'
 import { socket } from '../../shared/providers'
 import {
   ParticipantRepository,
@@ -56,14 +60,16 @@ export class ConservationController {
     try {
       const { id } = req.params
       const { userId } = req
-      const { message, messageType }: SendMessageDto = req.body
+      const { message, messageType, encryptType }: SendMessageDto = req.body
       const user = await this.userRepository.findOne({ where: { id: userId } })
-      await this.messageRepository.save(
+      const mess = await this.messageRepository.save(
         this.messageRepository.create({
           senderId: userId,
           conservationId: id,
           message,
           messageType: MessageTypeEnum[messageType],
+          encryptType:
+            MessageEncryptTypeEnum[MessageEncryptTypeEnum[encryptType]],
         }),
       )
       const participants = await this.participantRepository.find({
@@ -74,12 +80,12 @@ export class ConservationController {
         .emit('message', {
           conservationId: id,
           user,
+          messageId: mess.id,
           message,
           messageType,
+          encryptType,
         })
-      res
-        .status(StatusCodes.OK)
-        .json({ success: true, message: 'Send message successfully!' })
+      res.status(StatusCodes.OK).json({ success: true, messageId: mess.id })
     } catch (error) {
       next(error)
     }

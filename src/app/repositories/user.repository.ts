@@ -56,6 +56,7 @@ export class UserRepository extends Repository<User> {
         'conservationSettings',
         'conservationSettings.conservationId = conservation.id AND conservationSettings.userId = :userId',
       )
+      .leftJoinAndSelect('partner.signalStores', 'signalStores')
       .where('user.id = :userId')
       .andWhere('conservationSettings.isRemoved = false')
       .orderBy('message.message_created_at', 'DESC')
