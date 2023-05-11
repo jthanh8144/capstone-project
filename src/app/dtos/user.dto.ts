@@ -4,6 +4,7 @@ import {
   IsOptional,
   MinLength,
   Matches,
+  IsNumber,
 } from 'class-validator'
 import { passwordRegex } from '../utils'
 
@@ -66,4 +67,27 @@ export class RemoveUserDto {
     message: 'Password too weak',
   })
   password: string
+}
+
+export class SignalDto {
+  @IsNumber()
+  registrationId: number
+
+  @IsString()
+  ikPublicKey: string
+
+  @IsNumber()
+  spkKeyId: number
+
+  @IsString()
+  spkPublicKey: string
+
+  @IsString()
+  spkSignature: string
+
+  @IsNumber()
+  pkKeyId: number
+
+  @IsString()
+  pkPublicKey: string
 }

@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import minioClient from '../../shared/configs/minio.config'
 import { StatusCodes } from 'http-status-codes'
-import { PresignedUrlType } from '../dtos'
+import { GetDeviceIdType, PresignedUrlType } from '../dtos'
 import { generate } from 'generate-password'
+import { DeviceRepository } from '../repositories'
 
 export class HomeController {
   public home = async (req: Request, res: Response): Promise<void> => {
@@ -35,6 +36,30 @@ export class HomeController {
           process.env.BUCKET_NAME || 'safe-talk'
         }/${location}`,
       })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  public getDeviceId = async (
+    req: Request<any, any, any, GetDeviceIdType>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { deviceId } = req.query
+      const deviceRepository = new DeviceRepository()
+      const device = await deviceRepository.findOne({ where: { deviceId } })
+      if (device) {
+        res.status(StatusCodes.OK).json({ success: true, deviceId: device.id })
+      } else {
+        const newDevice = await deviceRepository.save(
+          deviceRepository.create({ deviceId }),
+        )
+        res
+          .status(StatusCodes.OK)
+          .json({ success: true, deviceId: newDevice.id })
+      }
     } catch (err) {
       next(err)
     }

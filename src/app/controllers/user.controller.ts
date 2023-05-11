@@ -3,20 +3,31 @@ import { StatusCodes } from 'http-status-codes'
 import { ILike } from 'typeorm'
 
 import dataSource from '../../shared/configs/data-source.config'
-import { FriendRequestRepository, UserRepository } from '../repositories'
+import {
+  FriendRequestRepository,
+  SignalStoreRepository,
+  UserRepository,
+} from '../repositories'
 import { AuthRequest } from '../typings'
 import { User } from '../entities'
-import { RemoveUserDto, UpdatePasswordDto, UpdateUserDto } from '../dtos'
+import {
+  RemoveUserDto,
+  SignalDto,
+  UpdatePasswordDto,
+  UpdateUserDto,
+} from '../dtos'
 import { comparePassword, hashPassword } from '../utils'
 import { handleUserConservations } from '../helpers/response.helper'
 
 export class UserController {
   private userRepository: UserRepository
   private friendRequestRepository: FriendRequestRepository
+  private signalStoreRepository: SignalStoreRepository
 
   constructor() {
     this.userRepository = new UserRepository()
     this.friendRequestRepository = new FriendRequestRepository()
+    this.signalStoreRepository = new SignalStoreRepository()
   }
 
   public getUserByEmail = async (
@@ -203,6 +214,57 @@ export class UserController {
         success: true,
         conservations: handleUserConservations(conservations, userId),
       })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public signal = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const data: SignalDto = req.body
+      const signalStore = await this.signalStoreRepository.findOne({
+        where: { userId },
+      })
+      if (!signalStore) {
+        await this.signalStoreRepository.save(
+          this.signalStoreRepository.create({
+            userId,
+            ...data,
+          }),
+        )
+      } else {
+        await this.signalStoreRepository.save(
+          this.signalStoreRepository.create({
+            id: signalStore.id,
+            userId,
+            ...data,
+          }),
+        )
+      }
+      res
+        .status(StatusCodes.OK)
+        .json({ success: true, message: 'Create signal key successfully!' })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public getSignal = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const signalStore = await this.signalStoreRepository.findOne({
+        where: { userId },
+      })
+      res.status(StatusCodes.OK).json(signalStore)
     } catch (error) {
       next(error)
     }

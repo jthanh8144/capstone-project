@@ -11,7 +11,8 @@ import {
   Index,
 } from 'typeorm'
 import { User, Conservation } from '.'
-import { MessageTypeEnum } from '../../shared/constants'
+import { MessageEncryptTypeEnum, MessageTypeEnum } from '../../shared/constants'
+import { EncryptTypeTransformer } from '../../database/column-transformers'
 
 @Entity({ name: 'messages' })
 @Index(['senderId', 'conservationId'])
@@ -24,6 +25,15 @@ export class Message extends BaseEntity {
 
   @Column({ name: 'message_type', type: 'enum', enum: MessageTypeEnum })
   messageType: MessageTypeEnum
+
+  @Column({
+    name: 'encrypt_type',
+    type: 'enum',
+    enum: MessageEncryptTypeEnum,
+    default: MessageEncryptTypeEnum.one,
+    transformer: new EncryptTypeTransformer(),
+  })
+  encryptType: MessageEncryptTypeEnum
 
   @Column({ name: 'is_removed', default: false })
   isRemoved: boolean

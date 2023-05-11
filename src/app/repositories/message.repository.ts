@@ -26,6 +26,7 @@ export class MessageRepository extends Repository<Message> {
         'message.id',
         'message.message',
         'message.messageType',
+        'message.encryptType',
         'message.isRemoved',
         'message.conservationId',
         'message.createdAt',

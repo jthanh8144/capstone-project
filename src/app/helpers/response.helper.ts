@@ -1,6 +1,6 @@
-import { MessageTypeEnum } from '../../shared/constants'
+import { MessageEncryptTypeEnum, MessageTypeEnum } from '../../shared/constants'
 import { UserConservation } from './../typings/repository'
-import { ConservationSetting, Message, User } from '../entities'
+import { ConservationSetting, Message, SignalStore, User } from '../entities'
 
 export const handleUserConservations = (
   userConservations: UserConservation[],
@@ -9,6 +9,7 @@ export const handleUserConservations = (
   const conservations: Array<{
     id: string
     user: User
+    signal: SignalStore
     latestMessage: Message
     setting: ConservationSetting
   }> = []
@@ -21,11 +22,24 @@ export const handleUserConservations = (
     user.isVerified = userConservation['partner_is_verified']
     user.isActive = userConservation['partner_is_active']
 
+    const signal = new SignalStore()
+    signal.registrationId = userConservation['signalStores_registration_id']
+    signal.ikPublicKey = userConservation['signalStores_ik_public_key']
+    signal.spkKeyId = userConservation['signalStores_spk_key_id']
+    signal.spkPublicKey = userConservation['signalStores_spk_public_key']
+    signal.spkSignature = userConservation['signalStores_spk_signature']
+    signal.pkKeyId = userConservation['signalStores_pk_key_id']
+    signal.pkPublicKey = userConservation['signalStores_pk_public_key']
+
     const latestMessage = new Message()
     latestMessage.id = userConservation['message_id']
     latestMessage.message = userConservation['message_message']
     latestMessage.messageType =
       MessageTypeEnum[userConservation['message_message_type']]
+    latestMessage.encryptType =
+      MessageEncryptTypeEnum[
+        MessageEncryptTypeEnum[userConservation['message_encrypt_type']]
+      ]
     latestMessage.isRemoved = userConservation['message_is_removed']
     latestMessage.createdAt = userConservation['message_created_at']
     latestMessage.sender = new User()
@@ -43,6 +57,7 @@ export const handleUserConservations = (
     conservations.push({
       id: userConservation['conservation_id'],
       user,
+      signal,
       latestMessage,
       setting,
     })

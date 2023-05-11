@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator'
+import { IsNumber, IsString } from 'class-validator'
 
 export class SendMessageDto {
   @IsString()
@@ -6,4 +6,7 @@ export class SendMessageDto {
 
   @IsString()
   message: string
+
+  @IsNumber()
+  encryptType: number
 }

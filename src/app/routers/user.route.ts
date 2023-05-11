@@ -6,6 +6,7 @@ import {
   IdDto,
   RemoveUserDto,
   SearchDto,
+  SignalDto,
   UpdatePasswordDto,
   UpdateUserDto,
 } from '../dtos'
@@ -70,6 +71,14 @@ class UserRoute {
     this.router
       .route('/conservations')
       .get(authenticationMiddleware, this.userController.getConservationsOfUser)
+    this.router
+      .route('/signal')
+      .get(authenticationMiddleware, this.userController.getSignal)
+      .post(
+        authenticationMiddleware,
+        validationMiddleware(SignalDto, 'body'),
+        this.userController.signal,
+      )
   }
 }
 

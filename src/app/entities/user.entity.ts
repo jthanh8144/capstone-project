@@ -15,6 +15,7 @@ import {
   FriendRequest,
   Message,
   Participant,
+  SignalStore,
   UserToken,
   VerifyRequest,
 } from '.'
@@ -84,4 +85,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => VerifyRequest, (verifyRequest) => verifyRequest.user)
   verifyRequests: VerifyRequest[]
+
+  @OneToMany(() => SignalStore, (signal) => signal.user)
+  signalStores: SignalStore[]
 }
