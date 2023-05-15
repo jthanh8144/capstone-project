@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm'
 import dataSource from '../../shared/configs/data-source.config'
-import { FriendEnum } from '../../shared/constants'
+import { FriendEnum, LIMIT_FRIEND_SELECTED } from '../../shared/constants'
 import { UpdateFriendRequestDto } from '../dtos'
 import { FriendRequest } from '../entities'
 
@@ -53,17 +53,24 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
       .execute()
   }
 
-  public async getFriendsListOfUser(userId: string) {
+  public async getFriendsListOfUser(userId: string, offset = 1, q?: string) {
+    const limit = LIMIT_FRIEND_SELECTED
+    const skip = limit * offset - limit
     const friendRequests = await this.createQueryBuilder('friendRequest')
       .leftJoinAndSelect('friendRequest.requester', 'requester')
       .leftJoinAndSelect('friendRequest.receiver', 'receiver')
+      .leftJoinAndSelect('requester.signalStore', 'requestSignal')
+      .leftJoinAndSelect('receiver.signalStore', 'receiverSignal')
       .where(
         '(friendRequest.requesterId = :userId OR friendRequest.receiverId = :userId)',
       )
       .andWhere('friendRequest.status = :status')
       .setParameters({ userId, status: FriendEnum.accepted })
+      .orderBy('friendRequest.createdAt', 'ASC')
+      .take(limit)
+      .skip(skip)
       .getMany()
-    return friendRequests.map((item) => {
+    const result = friendRequests.map((item) => {
       if (item.receiverId === userId) {
         return item.requester
       }
@@ -71,5 +78,12 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
         return item.receiver
       }
     })
+    return q
+      ? result.filter(
+          (item) =>
+            item.fullName.toUpperCase().includes(q.toUpperCase()) ||
+            item.email.toUpperCase().includes(q.toUpperCase()),
+        )
+      : result
   }
 }

@@ -10,3 +10,17 @@ export class SendMessageDto {
   @IsNumber()
   encryptType: number
 }
+
+export class NewConservationDto {
+  @IsString()
+  receiverId: string
+
+  @IsString()
+  messageType: string
+
+  @IsString()
+  message: string
+
+  @IsNumber()
+  encryptType: number
+}

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { ILike } from 'typeorm'
 
 import dataSource from '../../shared/configs/data-source.config'
 import {
@@ -17,7 +16,11 @@ import {
   UpdateUserDto,
 } from '../dtos'
 import { comparePassword, hashPassword } from '../utils'
-import { handleUserConservations } from '../helpers/response.helper'
+import {
+  handleConservationWith,
+  handleSearchUsers,
+  handleUserConservations,
+} from '../helpers/response.helper'
 
 export class UserController {
   private userRepository: UserRepository
@@ -45,20 +48,18 @@ export class UserController {
   }
 
   public getUsers = async (
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
+      const { userId } = req
       const { q } = req.query
       const query = `%${q as string}%`
-      const users = await this.userRepository.find({
-        where: [
-          { fullName: ILike(query), isActive: true },
-          { email: ILike(query), isActive: true },
-        ],
-      })
-      res.status(StatusCodes.OK).json({ success: true, users })
+      const users = await this.userRepository.searchUser(userId, query)
+      res
+        .status(StatusCodes.OK)
+        .json({ success: true, users: handleSearchUsers(users) })
     } catch (error) {
       next(error)
     }
@@ -148,8 +149,13 @@ export class UserController {
   ): Promise<void> => {
     try {
       const { userId } = req
+      const { page, name } = req.query
       const friends = await this.friendRequestRepository.getFriendsListOfUser(
         userId,
+        typeof page === 'string' && !isNaN(+page) && +page > 0
+          ? +page
+          : undefined,
+        typeof name === 'string' ? name : undefined,
       )
       res.status(StatusCodes.OK).json({ success: true, friends })
     } catch (error) {
@@ -265,6 +271,31 @@ export class UserController {
         where: { userId },
       })
       res.status(StatusCodes.OK).json(signalStore)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public getConservationWithUser = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const { partnerId } = req.params
+      const conservation = await this.userRepository.getConservationWithUser(
+        userId,
+        partnerId,
+      )
+      if (conservation && handleConservationWith(conservation, userId).id) {
+        res.status(StatusCodes.OK).json({
+          existed: true,
+          data: handleConservationWith(conservation, userId),
+        })
+      } else {
+        res.status(StatusCodes.OK).json({ existed: false, data: null })
+      }
     } catch (error) {
       next(error)
     }

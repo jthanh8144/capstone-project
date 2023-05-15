@@ -3,6 +3,7 @@ import { authenticationMiddleware, validationMiddleware } from '../middlewares'
 import { UserController } from '../controllers'
 import {
   CheckEmailDto,
+  GetConservationWithUser,
   IdDto,
   RemoveUserDto,
   SearchDto,
@@ -71,6 +72,13 @@ class UserRoute {
     this.router
       .route('/conservations')
       .get(authenticationMiddleware, this.userController.getConservationsOfUser)
+    this.router
+      .route('/conservations/:partnerId')
+      .get(
+        authenticationMiddleware,
+        validationMiddleware(GetConservationWithUser, 'params'),
+        this.userController.getConservationWithUser,
+      )
     this.router
       .route('/signal')
       .get(authenticationMiddleware, this.userController.getSignal)

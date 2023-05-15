@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm'
 import { User } from '.'
 
@@ -67,7 +67,7 @@ export class SignalStore extends BaseEntity {
   })
   deletedAt: Date
 
-  @ManyToOne(() => User, (user) => user.userTokens, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.signalStore, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User
 }
