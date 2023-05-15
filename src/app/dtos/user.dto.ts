@@ -91,3 +91,8 @@ export class SignalDto {
   @IsString()
   pkPublicKey: string
 }
+
+export class GetConservationWithUser {
+  @IsString()
+  partnerId: string
+}

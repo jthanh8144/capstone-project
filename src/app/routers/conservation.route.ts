@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { authenticationMiddleware, validationMiddleware } from '../middlewares'
 import { ConservationController } from '../controllers'
-import { IdDto, PageDto, SendMessageDto } from '../dtos'
+import { IdDto, NewConservationDto, PageDto, SendMessageDto } from '../dtos'
 
 class ConservationRoute {
   public path = '/conservations'
@@ -16,6 +16,13 @@ class ConservationRoute {
 
   private initializeRoutes() {
     this.router
+      .route('/')
+      .post(
+        authenticationMiddleware,
+        validationMiddleware(NewConservationDto, 'body'),
+        this.conservationController.newChat,
+      )
+    this.router
       .route('/:id')
       .get(
         authenticationMiddleware,
@@ -28,6 +35,13 @@ class ConservationRoute {
         validationMiddleware(IdDto, 'params'),
         validationMiddleware(SendMessageDto, 'body'),
         this.conservationController.sendChat,
+      )
+    this.router
+      .route('/:id/settings')
+      .get(
+        authenticationMiddleware,
+        validationMiddleware(IdDto, 'params'),
+        this.conservationController.getConservationSetting,
       )
   }
 }

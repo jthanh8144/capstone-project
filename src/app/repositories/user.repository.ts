@@ -56,12 +56,68 @@ export class UserRepository extends Repository<User> {
         'conservationSettings',
         'conservationSettings.conservationId = conservation.id AND conservationSettings.userId = :userId',
       )
-      .leftJoinAndSelect('partner.signalStores', 'signalStores')
+      .leftJoinAndSelect('partner.signalStore', 'signalStore')
       .where('user.id = :userId')
       .andWhere('conservationSettings.isRemoved = false')
       .orderBy('message.message_created_at', 'DESC')
       .setParameters({ userId })
       .getRawMany()
+  }
+
+  public getConservationWithUser(
+    userId: string,
+    partnerId: string,
+  ): Promise<UserConservation> {
+    const messageRepository = new MessageRepository()
+    return this.createQueryBuilder('user')
+      .leftJoinAndSelect(
+        'user.participants',
+        'participants',
+        'participants.userId = user.id',
+      )
+      .leftJoinAndSelect('participants.conservation', 'conservation')
+      .leftJoinAndSelect(
+        `(${messageRepository.getQueryLatestMessage()})`,
+        'message',
+        'message.message_conservation_id = conservation.id',
+      )
+      .leftJoinAndSelect(
+        'conservation.participants',
+        'participant',
+        'conservation.id = participant.conservationId AND participant.userId != :userId',
+      )
+      .leftJoinAndSelect('participant.user', 'partner')
+      .leftJoinAndSelect(
+        'conservation.conservationSettings',
+        'conservationSettings',
+        'conservationSettings.conservationId = conservation.id AND conservationSettings.userId = :userId',
+      )
+      .leftJoinAndSelect('partner.signalStore', 'signalStore')
+      .where('user.id = :userId')
+      .andWhere('conservationSettings.isRemoved = false')
+      .andWhere('partner.id = :partnerId')
+      .orderBy('message.message_created_at', 'DESC')
+      .setParameters({ userId, partnerId })
+      .getRawOne()
+  }
+
+  public searchUser(userId: string, q: string) {
+    return this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.signalStore', 'signalStore')
+      .leftJoinAndSelect(
+        'user.requestedFriendRequests',
+        'requested',
+        'user.id = requested.requesterId AND requested.receiverId = :userId',
+      )
+      .leftJoinAndSelect(
+        'user.receivedFriendRequests',
+        'received',
+        'user.id = received.receiverId AND received.requesterId = :userId',
+      )
+      .where('(user.email ILIKE :q AND user.isActive = true)')
+      .andWhere('user.id != :userId')
+      .setParameters({ userId, q })
+      .getMany()
   }
 }
 

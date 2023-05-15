@@ -8,6 +8,7 @@ import {
   DeleteDateColumn,
   OneToMany,
   Index,
+  OneToOne,
 } from 'typeorm'
 import {
   Conservation,
@@ -86,6 +87,6 @@ export class User extends BaseEntity {
   @OneToMany(() => VerifyRequest, (verifyRequest) => verifyRequest.user)
   verifyRequests: VerifyRequest[]
 
-  @OneToMany(() => SignalStore, (signal) => signal.user)
-  signalStores: SignalStore[]
+  @OneToOne(() => SignalStore, (signal) => signal.user)
+  signalStore: SignalStore[]
 }
