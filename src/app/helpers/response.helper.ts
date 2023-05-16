@@ -53,6 +53,9 @@ export const handleUserConservations = (
     }
 
     const setting = new ConservationSetting()
+    setting.id = userConservation['conservationSettings_id']
+    setting.conservationId =
+      userConservation['conservationSettings_conservation_id']
     setting.isMuted = userConservation['conservationSettings_is_muted']
     setting.isRemoved = userConservation['conservationSettings_is_removed']
     setting.isArchived = userConservation['conservationSettings_is_archived']
@@ -116,6 +119,9 @@ export const handleConservationWith = (
     }
 
     setting = new ConservationSetting()
+    setting.id = userConservation['conservationSettings_id']
+    setting.conservationId =
+      userConservation['conservationSettings_conservation_id']
     setting.isMuted = userConservation['conservationSettings_is_muted']
     setting.isRemoved = userConservation['conservationSettings_is_removed']
     setting.isArchived = userConservation['conservationSettings_is_archived']

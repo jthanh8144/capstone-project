@@ -16,7 +16,11 @@ import {
   ConservationSettingRepository,
 } from '../repositories'
 import { AuthRequest } from '../typings'
-import { NewConservationDto, SendMessageDto } from '../dtos'
+import {
+  NewConservationDto,
+  SendMessageDto,
+  UpdateConservationSettingDto,
+} from '../dtos'
 import { Not } from 'typeorm'
 
 export class ConservationController {
@@ -182,6 +186,23 @@ export class ConservationController {
         },
       })
       res.status(StatusCodes.OK).json({ success: true, setting })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public updateConservationSetting = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { id } = req.params
+      const data: UpdateConservationSettingDto = req.body
+      await this.conservationSettingRepository.updateSetting(id, data)
+      res
+        .status(StatusCodes.OK)
+        .json({ success: true, message: 'Update conservation success!' })
     } catch (error) {
       next(error)
     }

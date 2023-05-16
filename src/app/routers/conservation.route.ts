@@ -43,6 +43,13 @@ class ConservationRoute {
         validationMiddleware(IdDto, 'params'),
         this.conservationController.getConservationSetting,
       )
+    this.router
+      .route('/settings/:id')
+      .put(
+        authenticationMiddleware,
+        validationMiddleware(IdDto, 'params'),
+        this.conservationController.updateConservationSetting,
+      )
   }
 }
 
