@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator'
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class SendMessageDto {
   @IsString()
@@ -23,4 +23,18 @@ export class NewConservationDto {
 
   @IsNumber()
   encryptType: number
+}
+
+export class UpdateConservationSettingDto {
+  @IsBoolean()
+  @IsOptional()
+  isMuted?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  isRemoved?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  isArchived?: boolean
 }
