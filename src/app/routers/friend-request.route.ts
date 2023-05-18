@@ -4,6 +4,7 @@ import { FriendRequestController } from '../controllers'
 import {
   CreateFriendRequestDto,
   IdDto,
+  PageDto,
   UpdateStatusFriendRequestDto,
 } from '../dtos'
 
@@ -23,12 +24,14 @@ class FriendRequestRoute {
       .route('/sended')
       .get(
         authenticationMiddleware,
+        validationMiddleware(PageDto, 'query'),
         this.friendRequestController.getSendedFriendRequests,
       )
     this.router
       .route('/received')
       .get(
         authenticationMiddleware,
+        validationMiddleware(PageDto, 'query'),
         this.friendRequestController.getReceivedFriendRequests,
       )
     this.router

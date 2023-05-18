@@ -1,5 +1,6 @@
 import { NextFunction, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
+import { Not } from 'typeorm'
 
 import {
   ConservationEnum,
@@ -21,7 +22,7 @@ import {
   SendMessageDto,
   UpdateConservationSettingDto,
 } from '../dtos'
-import { Not } from 'typeorm'
+import { getPageFromQuery } from '../utils'
 
 export class ConservationController {
   private messageRepository: MessageRepository
@@ -46,17 +47,16 @@ export class ConservationController {
     try {
       const { id } = req.params
       const { page } = req.query
+      const realPage = getPageFromQuery(page) || 1
       const [messages, total] =
-        await this.messageRepository.getMessagesOfConservation(
-          id,
-          typeof page === 'string' && !isNaN(+page) && +page > 0
-            ? +page
-            : undefined,
-        )
+        await this.messageRepository.getMessagesOfConservation(id, realPage)
+      const totalPage = Math.ceil(total / LIMIT_CHAT_SELECTED)
       res.status(StatusCodes.OK).json({
         success: true,
         messages,
-        totalPage: Math.ceil(total / LIMIT_CHAT_SELECTED),
+        nextPage:
+          total === 0 || totalPage === realPage ? undefined : realPage + 1,
+        totalPage,
       })
     } catch (error) {
       next(error)

@@ -2,13 +2,19 @@ import { UserConservation } from './../typings/repository'
 import { Repository } from 'typeorm'
 
 import dataSource from '../../shared/configs/data-source.config'
+import {
+  LIMIT_CONSERVATION_SELECTED,
+  LIMIT_USER_SELECTED,
+} from '../../shared/constants'
 import { MessageRepository } from './message.repository'
 import { User } from '../entities'
 import { CreateUserDto } from '../dtos'
 
 export class UserRepository extends Repository<User> {
+  private messageRepository: MessageRepository
   constructor() {
     super(User, dataSource.manager)
+    this.messageRepository = new MessageRepository()
   }
 
   public getUserByEmail(email: string) {
@@ -35,13 +41,45 @@ export class UserRepository extends Repository<User> {
     })
   }
 
-  public getConservationsOfUser(userId: string): Promise<UserConservation[]> {
-    const messageRepository = new MessageRepository()
+  public async countTotalConservationsOfUser(userId: string) {
+    const data = await this.createQueryBuilder('user')
+      .select(['user.id'])
+      .leftJoinAndSelect('user.participants', 'participants')
+      .leftJoinAndSelect('participants.conservation', 'conservation')
+      .leftJoinAndSelect(
+        `(${this.messageRepository.getQueryLatestMessage()})`,
+        'message',
+        'message.message_conservation_id = conservation.id',
+      )
+      .leftJoinAndSelect(
+        'conservation.participants',
+        'participant',
+        'conservation.id = participant.conservationId AND participant.userId != :userId',
+      )
+      .leftJoinAndSelect(
+        'conservation.conservationSettings',
+        'conservationSettings',
+        'conservationSettings.conservationId = conservation.id AND conservationSettings.userId = :userId',
+      )
+      .where('user.id = :userId')
+      .andWhere('conservationSettings.isRemoved = false')
+      .orderBy('message.message_created_at', 'DESC')
+      .setParameters({ userId })
+      .getOne()
+    return data?.participants?.length || 0
+  }
+
+  public getConservationsOfUser(
+    userId: string,
+    page = 1,
+  ): Promise<UserConservation[]> {
+    const limit = LIMIT_CONSERVATION_SELECTED
+    const skip = limit * page - limit
     return this.createQueryBuilder('user')
       .leftJoinAndSelect('user.participants', 'participants')
       .leftJoinAndSelect('participants.conservation', 'conservation')
       .leftJoinAndSelect(
-        `(${messageRepository.getQueryLatestMessage()})`,
+        `(${this.messageRepository.getQueryLatestMessage()})`,
         'message',
         'message.message_conservation_id = conservation.id',
       )
@@ -61,6 +99,8 @@ export class UserRepository extends Repository<User> {
       .andWhere('conservationSettings.isRemoved = false')
       .orderBy('message.message_created_at', 'DESC')
       .setParameters({ userId })
+      .limit(limit)
+      .offset(skip)
       .getRawMany()
   }
 
@@ -68,7 +108,6 @@ export class UserRepository extends Repository<User> {
     userId: string,
     partnerId: string,
   ): Promise<UserConservation> {
-    const messageRepository = new MessageRepository()
     return this.createQueryBuilder('user')
       .leftJoinAndSelect(
         'user.participants',
@@ -77,7 +116,7 @@ export class UserRepository extends Repository<User> {
       )
       .leftJoinAndSelect('participants.conservation', 'conservation')
       .leftJoinAndSelect(
-        `(${messageRepository.getQueryLatestMessage()})`,
+        `(${this.messageRepository.getQueryLatestMessage()})`,
         'message',
         'message.message_conservation_id = conservation.id',
       )
@@ -101,7 +140,9 @@ export class UserRepository extends Repository<User> {
       .getRawOne()
   }
 
-  public searchUser(userId: string, q: string) {
+  public searchUser(userId: string, q: string, page = 1) {
+    const limit = LIMIT_USER_SELECTED
+    const skip = limit * page - limit
     return this.createQueryBuilder('user')
       .leftJoinAndSelect('user.signalStore', 'signalStore')
       .leftJoinAndSelect(
@@ -117,7 +158,10 @@ export class UserRepository extends Repository<User> {
       .where('(user.email ILIKE :q AND user.isActive = true)')
       .andWhere('user.id != :userId')
       .setParameters({ userId, q })
-      .getMany()
+      .orderBy('user.email', 'ASC')
+      .take(limit)
+      .skip(skip)
+      .getManyAndCount()
   }
 }
 

@@ -42,6 +42,10 @@ export class CheckEmailDto {
 export class SearchDto {
   @IsString()
   q: string
+
+  @IsString()
+  @IsOptional()
+  page: string
 }
 
 export class UpdatePasswordDto {

@@ -3,8 +3,9 @@ import { StatusCodes } from 'http-status-codes'
 
 import { CreateFriendRequestDto, UpdateStatusFriendRequestDto } from '../dtos'
 import { FriendRequestRepository } from '../repositories'
-import { FriendEnum } from '../../shared/constants'
+import { FriendEnum, LIMIT_USER_SELECTED } from '../../shared/constants'
 import { AuthRequest } from '../typings'
+import { getPageFromQuery } from '../utils'
 
 export class FriendRequestController {
   private friendRequestRepository: FriendRequestRepository
@@ -74,9 +75,21 @@ export class FriendRequestController {
   ): Promise<void> => {
     try {
       const { userId } = req
-      const friendRequests =
-        await this.friendRequestRepository.getSendedFriendRequest(userId)
-      res.status(StatusCodes.OK).json({ success: true, friendRequests })
+      const { page } = req.query
+      const realPage = getPageFromQuery(page) || 1
+      const [friendRequests, total] =
+        await this.friendRequestRepository.getSendedFriendRequest(
+          userId,
+          realPage,
+        )
+      const totalPage = Math.ceil(total / LIMIT_USER_SELECTED)
+      res.status(StatusCodes.OK).json({
+        success: true,
+        friendRequests,
+        nextPage:
+          total === 0 || totalPage === realPage ? undefined : realPage + 1,
+        totalPage,
+      })
     } catch (error) {
       next(error)
     }
@@ -89,9 +102,18 @@ export class FriendRequestController {
   ): Promise<void> => {
     try {
       const { userId } = req
-      const friendRequests =
+      const { page } = req.query
+      const realPage = getPageFromQuery(page) || 1
+      const [friendRequests, total] =
         await this.friendRequestRepository.getReceivedFriendRequest(userId)
-      res.status(StatusCodes.OK).json({ success: true, friendRequests })
+      const totalPage = Math.ceil(total / LIMIT_USER_SELECTED)
+      res.status(StatusCodes.OK).json({
+        success: true,
+        friendRequests,
+        nextPage:
+          total === 0 || totalPage === realPage ? undefined : realPage + 1,
+        totalPage,
+      })
     } catch (error) {
       next(error)
     }

@@ -3,6 +3,10 @@ import { StatusCodes } from 'http-status-codes'
 
 import dataSource from '../../shared/configs/data-source.config'
 import {
+  LIMIT_CONSERVATION_SELECTED,
+  LIMIT_USER_SELECTED,
+} from '../../shared/constants'
+import {
   FriendRequestRepository,
   SignalStoreRepository,
   UserRepository,
@@ -15,7 +19,7 @@ import {
   UpdatePasswordDto,
   UpdateUserDto,
 } from '../dtos'
-import { comparePassword, hashPassword } from '../utils'
+import { comparePassword, getPageFromQuery, hashPassword } from '../utils'
 import {
   handleConservationWith,
   handleSearchUsers,
@@ -54,12 +58,22 @@ export class UserController {
   ): Promise<void> => {
     try {
       const { userId } = req
-      const { q } = req.query
+      const { q, page } = req.query
       const query = `%${q as string}%`
-      const users = await this.userRepository.searchUser(userId, query)
-      res
-        .status(StatusCodes.OK)
-        .json({ success: true, users: handleSearchUsers(users) })
+      const realPage = getPageFromQuery(page) || 1
+      const [users, total] = await this.userRepository.searchUser(
+        userId,
+        query,
+        realPage,
+      )
+      const totalPage = Math.ceil(total / LIMIT_USER_SELECTED)
+      res.status(StatusCodes.OK).json({
+        success: true,
+        users: handleSearchUsers(users),
+        nextPage:
+          total === 0 || totalPage === realPage ? undefined : realPage + 1,
+        totalPage,
+      })
     } catch (error) {
       next(error)
     }
@@ -150,14 +164,21 @@ export class UserController {
     try {
       const { userId } = req
       const { page, name } = req.query
-      const friends = await this.friendRequestRepository.getFriendsListOfUser(
-        userId,
-        typeof page === 'string' && !isNaN(+page) && +page > 0
-          ? +page
-          : undefined,
-        typeof name === 'string' ? name : undefined,
-      )
-      res.status(StatusCodes.OK).json({ success: true, friends })
+      const realPage = getPageFromQuery(page) || 1
+      const { friends, total } =
+        await this.friendRequestRepository.getFriendsListOfUser(
+          userId,
+          realPage,
+          typeof name === 'string' ? name : undefined,
+        )
+      const totalPage = Math.ceil(total / LIMIT_USER_SELECTED)
+      res.status(StatusCodes.OK).json({
+        success: true,
+        friends,
+        nextPage:
+          total === 0 || totalPage === realPage ? undefined : realPage + 1,
+        totalPage,
+      })
     } catch (error) {
       next(error)
     }
@@ -213,12 +234,19 @@ export class UserController {
   ): Promise<void> => {
     try {
       const { userId } = req
-      const conservations = await this.userRepository.getConservationsOfUser(
-        userId,
-      )
+      const { page } = req.query
+      const realPage = getPageFromQuery(page) || 1
+      const [conservations, total] = await Promise.all([
+        this.userRepository.getConservationsOfUser(userId, realPage),
+        this.userRepository.countTotalConservationsOfUser(userId),
+      ])
+      const totalPage = Math.ceil(total / LIMIT_CONSERVATION_SELECTED)
       res.status(StatusCodes.OK).json({
         success: true,
         conservations: handleUserConservations(conservations, userId),
+        nextPage:
+          total === 0 || totalPage === realPage ? undefined : realPage + 1,
+        totalPage,
       })
     } catch (error) {
       next(error)
