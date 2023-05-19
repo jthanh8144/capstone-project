@@ -21,16 +21,22 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
       .getOne()
   }
 
-  public getSendedFriendRequest(userId: string) {
+  public getSendedFriendRequest(userId: string, offset = 1) {
+    const limit = LIMIT_FRIEND_SELECTED
+    const skip = limit * offset - limit
     return this.createQueryBuilder('friendRequest')
       .leftJoinAndSelect('friendRequest.receiver', 'receiver')
       .where('friendRequest.requesterId = :userId')
       .andWhere('friendRequest.status != :status')
       .setParameters({ userId, status: FriendEnum.accepted })
-      .getMany()
+      .take(limit)
+      .skip(skip)
+      .getManyAndCount()
   }
 
-  public getReceivedFriendRequest(userId: string) {
+  public getReceivedFriendRequest(userId: string, offset = 1) {
+    const limit = LIMIT_FRIEND_SELECTED
+    const skip = limit * offset - limit
     return this.createQueryBuilder('friendRequest')
       .leftJoinAndSelect('friendRequest.requester', 'requester')
       .where('friendRequest.receiverId = :userId')
@@ -41,7 +47,9 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
         status: FriendEnum.accepted,
         declined: FriendEnum.declined,
       })
-      .getMany()
+      .take(limit)
+      .skip(skip)
+      .getManyAndCount()
   }
 
   public async updateFriendRequest(id: string, data: UpdateFriendRequestDto) {
@@ -56,7 +64,9 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
   public async getFriendsListOfUser(userId: string, offset = 1, q?: string) {
     const limit = LIMIT_FRIEND_SELECTED
     const skip = limit * offset - limit
-    const friendRequests = await this.createQueryBuilder('friendRequest')
+    const [friendRequests, total] = await this.createQueryBuilder(
+      'friendRequest',
+    )
       .leftJoinAndSelect('friendRequest.requester', 'requester')
       .leftJoinAndSelect('friendRequest.receiver', 'receiver')
       .leftJoinAndSelect('requester.signalStore', 'requestSignal')
@@ -69,7 +79,7 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
       .orderBy('friendRequest.createdAt', 'ASC')
       .take(limit)
       .skip(skip)
-      .getMany()
+      .getManyAndCount()
     const result = friendRequests.map((item) => {
       if (item.receiverId === userId) {
         return item.requester
@@ -78,12 +88,15 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
         return item.receiver
       }
     })
-    return q
-      ? result.filter(
-          (item) =>
-            item.fullName.toUpperCase().includes(q.toUpperCase()) ||
-            item.email.toUpperCase().includes(q.toUpperCase()),
-        )
-      : result
+    return {
+      friends: q
+        ? result.filter(
+            (item) =>
+              item.fullName.toUpperCase().includes(q.toUpperCase()) ||
+              item.email.toUpperCase().includes(q.toUpperCase()),
+          )
+        : result,
+      total,
+    }
   }
 }
