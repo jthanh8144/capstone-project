@@ -12,6 +12,8 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+RUN yarn migration:run
+
 RUN yarn build
 
 FROM ${NODE_IMAGE}
