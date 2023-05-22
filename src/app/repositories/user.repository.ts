@@ -172,5 +172,6 @@ type UpdateUserType = {
   fullName?: string
   password?: string
   avatarUrl?: string
+  isOnline?: boolean
 }
 // #endregion
