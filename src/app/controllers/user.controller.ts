@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import dataSource from '../../shared/configs/data-source.config'
 import {
   LIMIT_CONSERVATION_SELECTED,
+  LIMIT_FRIEND_SELECTED,
   LIMIT_USER_SELECTED,
 } from '../../shared/constants'
 import {
@@ -171,7 +172,7 @@ export class UserController {
           realPage,
           typeof name === 'string' ? name : undefined,
         )
-      const totalPage = Math.ceil(total / LIMIT_USER_SELECTED)
+      const totalPage = Math.ceil(total / LIMIT_FRIEND_SELECTED)
       res.status(StatusCodes.OK).json({
         success: true,
         friends,

@@ -45,6 +45,9 @@ export class User extends BaseEntity {
   @Column({ name: 'is_active', default: true })
   isActive: boolean
 
+  @Column({ name: 'is_online', default: false })
+  isOnline: boolean
+
   @CreateDateColumn({
     name: 'created_at',
   })
