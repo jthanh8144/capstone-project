@@ -6,18 +6,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
+  Index,
 } from 'typeorm'
-import { User } from '.'
 
-@Entity({ name: 'comments' })
-export class Comment extends BaseEntity {
+@Entity({ name: 'devices' })
+export class Device extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ type: 'text' })
-  comment: string
+  @Column({ name: 'device_id', unique: true })
+  @Index()
+  deviceId: string
 
   @CreateDateColumn({
     name: 'created_at',
@@ -33,8 +32,4 @@ export class Comment extends BaseEntity {
     name: 'deleted_at',
   })
   deletedAt: Date
-
-  @ManyToOne(() => User, (user) => user.comments)
-  @JoinColumn({ name: 'user_id' })
-  user: User
 }

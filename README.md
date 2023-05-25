@@ -3,7 +3,7 @@
 - Create a `.env` file from the `.env.example` file
 
   ```
-  cp .env.example .env
+  cp example.env .env
   ```
 
 - Install package

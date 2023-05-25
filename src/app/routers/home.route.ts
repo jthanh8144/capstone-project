@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { validationMiddleware } from '../middlewares'
 import { HomeController } from '../controllers'
-import { CreateUserDto } from '../dtos'
+import { validationMiddleware, authenticationMiddleware } from '../middlewares'
+import { GetDeviceId, PresignedUrlDto } from '../dtos'
 
 class HomeRoute {
   public path = '/'
@@ -17,10 +17,17 @@ class HomeRoute {
   private initializeRoutes() {
     this.router.route('/').get(this.homeController.home)
     this.router
-      .route('/users')
-      .post(
-        validationMiddleware(CreateUserDto, 'body', true),
-        this.homeController.createUser,
+      .route('/presigned-url')
+      .get(
+        authenticationMiddleware,
+        validationMiddleware(PresignedUrlDto, 'query'),
+        this.homeController.getPresignedUrl,
+      )
+    this.router
+      .route('/devices')
+      .get(
+        validationMiddleware(GetDeviceId, 'query'),
+        this.homeController.getDeviceId,
       )
   }
 }
