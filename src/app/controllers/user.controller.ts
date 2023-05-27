@@ -17,6 +17,7 @@ import { User } from '../entities'
 import {
   RemoveUserDto,
   SignalDto,
+  UpdateFcmTokenDto,
   UpdatePasswordDto,
   UpdateUserDto,
 } from '../dtos'
@@ -325,6 +326,23 @@ export class UserController {
       } else {
         res.status(StatusCodes.OK).json({ existed: false, data: null })
       }
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public updateFcmToken = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const { fcmToken }: UpdateFcmTokenDto = req.body
+      await this.userRepository.updateUser(userId, { fcmToken })
+      res
+        .status(StatusCodes.OK)
+        .json({ success: true, message: 'Update FCM token success' })
     } catch (error) {
       next(error)
     }

@@ -22,7 +22,7 @@ import {
   SendMessageDto,
   UpdateConservationSettingDto,
 } from '../dtos'
-import { getPageFromQuery } from '../utils'
+import { getPageFromQuery, pushNotification } from '../utils'
 
 export class ConservationController {
   private messageRepository: MessageRepository
@@ -85,6 +85,7 @@ export class ConservationController {
       )
       const participants = await this.participantRepository.find({
         where: { conservationId: id, userId: Not(userId) },
+        relations: { user: true },
       })
       socket
         .to(participants.map((participant) => participant.userId))
@@ -96,6 +97,10 @@ export class ConservationController {
           messageType,
           encryptType,
         })
+      await pushNotification(
+        participants.map((participant) => participant.user.fcmToken),
+        { title: 'Safe talk', body: `${user.fullName} send you a message!` },
+      )
       res.status(StatusCodes.OK).json({ success: true, messageId: mess.id })
     } catch (error) {
       next(error)
