@@ -173,5 +173,6 @@ type UpdateUserType = {
   password?: string
   avatarUrl?: string
   isOnline?: boolean
+  fcmToken?: string
 }
 // #endregion

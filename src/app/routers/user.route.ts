@@ -8,6 +8,7 @@ import {
   RemoveUserDto,
   SearchDto,
   SignalDto,
+  UpdateFcmTokenDto,
   UpdatePasswordDto,
   UpdateUserDto,
 } from '../dtos'
@@ -86,6 +87,13 @@ class UserRoute {
         authenticationMiddleware,
         validationMiddleware(SignalDto, 'body'),
         this.userController.signal,
+      )
+    this.router
+      .route('/fcm')
+      .put(
+        authenticationMiddleware,
+        validationMiddleware(UpdateFcmTokenDto, 'body'),
+        this.userController.updateFcmToken,
       )
   }
 }
