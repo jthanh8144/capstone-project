@@ -6,6 +6,7 @@ import { FriendRequestRepository } from '../repositories'
 import { FriendEnum, LIMIT_USER_SELECTED } from '../../shared/constants'
 import { AuthRequest } from '../typings'
 import { getPageFromQuery } from '../utils'
+import { socket } from '../../shared/providers'
 
 export class FriendRequestController {
   private friendRequestRepository: FriendRequestRepository
@@ -63,6 +64,7 @@ export class FriendRequestController {
           message: 'The friend request has sended successfully',
         })
       }
+      socket.to(receiverId).emit('friendRequest', { type: 'received' })
     } catch (error) {
       next(error)
     }
@@ -133,6 +135,9 @@ export class FriendRequestController {
       if (friendRequest) {
         if (friendRequest.receiverId === userId) {
           await this.friendRequestRepository.updateFriendRequest(id, { status })
+          socket
+            .to(friendRequest.requesterId)
+            .emit('friendRequest', { type: 'requested', status })
           res
             .status(StatusCodes.OK)
             .json({ success: true, message: 'Update status successfully' })
