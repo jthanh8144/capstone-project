@@ -3,8 +3,9 @@ import { initializeApp, cert } from 'firebase-admin/app'
 
 import {
   appProvider,
-  envLoadProvider,
+  cronProvider,
   databaseProvider,
+  envLoadProvider,
   socketProvider,
 } from './shared/providers'
 import { firebaseConfig } from './shared/configs/firebase.config'
@@ -16,4 +17,5 @@ import { firebaseConfig } from './shared/configs/firebase.config'
   await databaseProvider.initialize()
   appProvider.listen()
   socketProvider.initialize()
+  cronProvider.initialize()
 })()
