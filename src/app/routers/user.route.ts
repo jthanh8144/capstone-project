@@ -95,6 +95,13 @@ class UserRoute {
         validationMiddleware(UpdateFcmTokenDto, 'body'),
         this.userController.updateFcmToken,
       )
+    this.router
+      .route('/unfriend/:id')
+      .delete(
+        authenticationMiddleware,
+        validationMiddleware(IdDto, 'params'),
+        this.userController.unfriend,
+      )
   }
 }
 

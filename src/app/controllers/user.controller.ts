@@ -347,4 +347,21 @@ export class UserController {
       next(error)
     }
   }
+
+  public unfriend = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const { userId } = req
+      const { id } = req.params
+      await this.friendRequestRepository.unfriend(userId, id)
+      res
+        .status(StatusCodes.OK)
+        .json({ success: true, message: 'Unfriend success!' })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
