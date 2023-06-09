@@ -32,6 +32,11 @@ jobs:
           echo CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }} >> .env
           echo CLIENT_ID=${{ secrets.FIREBASE_CLIENT_ID }} >> .env
           echo CLIENT_CERT_URL=${{ secrets.FIREBASE_CLIENT_CERT_URL }} >> .env
+          echo MG_DB_HOST=${{ secrets.MG_DB_HOST }} >> .env
+          echo MG_DB_USER=${{ secrets.MG_DB_USER }} >> .env
+          echo MG_DB_PASS=${{ secrets.MG_DB_PASS }} >> .env
+          echo MG_DB_NAME=${{ secrets.MG_DB_NAME }} >> .env
+          echo MG_DB_COLLECTION=${{ secrets.MG_DB_COLLECTION }} >> .env
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

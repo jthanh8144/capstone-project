@@ -1,18 +1,18 @@
 import { sign, verify } from 'jsonwebtoken'
+import { environment } from '../../shared/constants'
 
 interface TokenData {
   userId: string
   email: string
 }
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || ''
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET || ''
+const { accessTokenSecret, refreshTokenSecret } = environment.jwt
 
 const getToken = (data: TokenData, isRefresh?: boolean) => {
   const secret = isRefresh ? refreshTokenSecret : accessTokenSecret
   const expiresIn = isRefresh
-    ? process.env.REFRESH_TOKEN_LIFE || '7d'
-    : process.env.ACCESS_TOKEN_LIFE || '1h'
+    ? environment.jwt.refreshTokenLife
+    : environment.jwt.accessTokenLife
 
   return sign(data, secret, { expiresIn })
 }

@@ -16,6 +16,6 @@ import { firebaseConfig } from './shared/configs/firebase.config'
   envLoadProvider.validate()
   await databaseProvider.initialize()
   appProvider.listen()
-  socketProvider.initialize()
+  await socketProvider.initialize()
   cronProvider.initialize()
 })()

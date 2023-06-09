@@ -1,11 +1,45 @@
 export const environment = {
   env: process.env.NODE_ENV,
   port: +(process.env.APP_PORT ?? 0),
+  host: process.env.APP_HOST,
   database: {
     database: process.env.DB_NAME,
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     port: process.env.DB_PORT,
     host: process.env.DB_HOST,
+  },
+  jwt: {
+    accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || '',
+    accessTokenLife: process.env.ACCESS_TOKEN_LIFE || '1h',
+    refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
+    refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
+  },
+  mail: {
+    user: process.env.MAIL_USER,
+    password: process.env.MAIL_PASSWORD,
+  },
+  minio: {
+    user: process.env.MINIO_USER,
+    password: process.env.MINIO_PASSWORD,
+    host: process.env.MINIO_HOST,
+    port: +(process.env.MINIO_PORT ?? 9000),
+    bucketName: process.env.BUCKET_NAME || 'safe-talk',
+    bucketRegion: process.env.BUCKET_REGION,
+  },
+  firebase: {
+    projectId: process.env.PROJECT_ID,
+    privateKeyId: process.env.PRIVATE_KEY_ID,
+    privateKey: process.env.PRIVATE_KEY,
+    clientEmail: process.env.CLIENT_EMAIL,
+    clientId: process.env.CLIENT_ID,
+    clientCertUrl: process.env.CLIENT_CERT_URL,
+  },
+  mongo: {
+    user: process.env.MG_DB_USER,
+    password: process.env.MG_DB_PASS,
+    host: process.env.MG_DB_HOST,
+    database: process.env.MG_DB_NAME,
+    collection: process.env.MG_DB_COLLECTION,
   },
 }
