@@ -32,9 +32,9 @@ jobs:
           echo CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }} >> .env
           echo CLIENT_ID=${{ secrets.FIREBASE_CLIENT_ID }} >> .env
           echo CLIENT_CERT_URL=${{ secrets.FIREBASE_CLIENT_CERT_URL }} >> .env
-          echo REDIST_HOST=${{ secrets.REDIST_HOST }} >> .env
-          echo REDIST_PORT=${{ secrets.REDIST_PORT }} >> .env
-          echo REDIST_PASS=${{ secrets.REDIST_PASS }} >> .env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
+          echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
+          echo REDIS_PASS=${{ secrets.REDIS_PASS }} >> .env
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
