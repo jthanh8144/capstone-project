@@ -35,11 +35,9 @@ export const environment = {
     clientId: process.env.CLIENT_ID,
     clientCertUrl: process.env.CLIENT_CERT_URL,
   },
-  mongo: {
-    user: process.env.MG_DB_USER,
-    password: process.env.MG_DB_PASS,
-    host: process.env.MG_DB_HOST,
-    database: process.env.MG_DB_NAME,
-    collection: process.env.MG_DB_COLLECTION,
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: +(process.env.REDIS_PORT ?? 6379),
+    password: process.env.REDIS_PASS,
   },
 }

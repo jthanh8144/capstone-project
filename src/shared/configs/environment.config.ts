@@ -28,9 +28,7 @@ export const envSchema = {
   CLIENT_EMAIL: Joi.string().required(),
   CLIENT_ID: Joi.string().required(),
   CLIENT_CERT_URL: Joi.string().required(),
-  MG_DB_HOST: Joi.string().required(),
-  MG_DB_USER: Joi.string().required(),
-  MG_DB_PASS: Joi.string().required(),
-  MG_DB_NAME: Joi.string().required(),
-  MG_DB_COLLECTION: Joi.string().required(),
+  REDIS_HOST: Joi.string().required(),
+  REDIS_PORT: Joi.string().required(),
+  REDIS_PASS: Joi.string().required(),
 }

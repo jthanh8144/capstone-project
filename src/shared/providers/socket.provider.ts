@@ -1,10 +1,9 @@
 import { Socket } from 'socket.io'
-import { createAdapter } from '@socket.io/mongo-adapter'
+import { createAdapter } from '@socket.io/redis-streams-adapter'
 
 import { socket } from '.'
-import { environment } from '../constants'
 import { logger } from './logger.provider'
-import mongoClient from '../configs/mongo.config'
+import redisClient from '../configs/redis.config'
 import { UserRepository } from '../../app/repositories'
 
 class SocketProvider {
@@ -16,11 +15,8 @@ class SocketProvider {
 
   public async initialize() {
     try {
-      await mongoClient.connect()
-      const mongoCollection = mongoClient
-        .db(environment.mongo.database)
-        .collection(environment.mongo.collection)
-      socket.adapter(createAdapter(mongoCollection))
+      await redisClient.connect()
+      socket.adapter(createAdapter(redisClient))
       socket.on('connection', async (sk: Socket) => {
         console.log('Socket connected', sk.id)
         const { roomId } = sk.handshake.query
