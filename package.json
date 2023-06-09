@@ -1,6 +1,6 @@
 {
   "name": "capstone-project-be",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "the source code init in 2023/04/10",
   "main": "index.js",
   "author": "jthanh8144",
@@ -20,6 +20,7 @@
     "seed-chat": "yarn build && node dist/src/database/seeds/chat.seed.js"
   },
   "dependencies": {
+    "@socket.io/mongo-adapter": "0.3.0",
     "bcryptjs": "2.4.3",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.0",
@@ -36,6 +37,7 @@
     "joi": "17.9.1",
     "jsonwebtoken": "9.0.0",
     "minio": "7.0.33",
+    "mongodb": "5.6.0",
     "node-cron": "3.0.2",
     "nodemailer": "6.9.1",
     "pg": "8.10.0",
