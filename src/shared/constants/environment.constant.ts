@@ -15,10 +15,6 @@ export const environment = {
     refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
     refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   },
-  mail: {
-    user: process.env.MAIL_USER,
-    password: process.env.MAIL_PASSWORD,
-  },
   minio: {
     user: process.env.MINIO_USER,
     password: process.env.MINIO_PASSWORD,
@@ -27,17 +23,13 @@ export const environment = {
     bucketName: process.env.BUCKET_NAME || 'safe-talk',
     bucketRegion: process.env.BUCKET_REGION,
   },
-  firebase: {
-    projectId: process.env.PROJECT_ID,
-    privateKeyId: process.env.PRIVATE_KEY_ID,
-    privateKey: process.env.PRIVATE_KEY,
-    clientEmail: process.env.CLIENT_EMAIL,
-    clientId: process.env.CLIENT_ID,
-    clientCertUrl: process.env.CLIENT_CERT_URL,
-  },
   redis: {
     host: process.env.REDIS_HOST,
     port: +(process.env.REDIS_PORT ?? 6379),
     password: process.env.REDIS_PASS,
+  },
+  workerName: {
+    event: process.env.WORKER_EVENT || 'event-queue',
+    mail: process.env.WORKER_MAIL || 'mail-queue',
   },
 }

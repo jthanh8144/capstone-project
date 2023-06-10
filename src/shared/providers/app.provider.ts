@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import hpp from 'hpp'
 import path from 'path'
-import { Server } from 'socket.io'
 import { serve, setup } from 'swagger-ui-express'
 
 import { errorMiddleware } from '../../app/middlewares'
@@ -77,4 +76,3 @@ class AppProvider {
 }
 
 export const appProvider = new AppProvider()
-export const socket = new Server(appProvider.server)
