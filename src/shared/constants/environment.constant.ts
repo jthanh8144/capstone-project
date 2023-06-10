@@ -15,6 +15,9 @@ export const environment = {
     refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
     refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   },
+  mail: {
+    user: process.env.MAIL_USER,
+  },
   minio: {
     user: process.env.MINIO_USER,
     password: process.env.MINIO_PASSWORD,

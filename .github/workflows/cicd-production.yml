@@ -21,6 +21,7 @@ jobs:
           echo DB_NAME=${{ secrets.DB_NAME_PRODUCTION }} >> .env
           echo DB_PASS=${{ secrets.DB_PASS }} >> .env
           echo DB_USER=${{ secrets.DB_USER }} >> .env
+          echo MAIL_USER=${{ secrets.MAIL_USER }} >> .env
           echo MINIO_USER=${{ secrets.MINIO_USER }} >> .env
           echo MINIO_PASSWORD=${{ secrets.MINIO_PASSWORD }} >> .env
           echo BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME_PRODUCTION }} >> .env
