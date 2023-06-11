@@ -12,7 +12,7 @@ import { errorMiddleware } from '../../app/middlewares'
 import { logger } from '.'
 import { environment } from '../constants'
 import * as routers from '../../app/routers'
-import swaggerDocument from '../../../swagger.json'
+import swaggerDocument from '../../swagger.json'
 
 class AppProvider {
   public app: express.Application
