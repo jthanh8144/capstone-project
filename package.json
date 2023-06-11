@@ -7,7 +7,7 @@
   "license": "ISC",
   "private": true,
   "scripts": {
-    "start": "node dist/src/main.js",
+    "start": "node dist/main.js",
     "dev": "nodemon --legacy-watch",
     "build": "rm -rf dist && tsc --project tsconfig.json",
     "prepare": "husky install",
