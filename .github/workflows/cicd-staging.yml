@@ -27,8 +27,8 @@ jobs:
           echo BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME }} >> .env
           echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
           echo REDIS_PASS=${{ secrets.REDIS_PASS }} >> .env
-          echo WORKER_EVENT=${{ secrets.WORKER_EVENT }} >> .env
-          echo WORKER_MAIL=${{ secrets.WORKER_MAIL }} >> .env
+          echo WORKER_EVENT=${{ secrets.WORKER_EVENT_STAGING }} >> .env
+          echo WORKER_MAIL=${{ secrets.WORKER_MAIL_STAGING }} >> .env
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
