@@ -175,6 +175,11 @@ export class FriendRequestController {
       if (friendRequest) {
         if (friendRequest.requesterId === userId) {
           await this.friendRequestRepository.delete(id)
+          await addEventJob({
+            to: friendRequest.receiverId,
+            eventName: 'friendRequest',
+            data: { type: 'received' },
+          })
           res.status(StatusCodes.OK).json({
             success: true,
             message: 'Delete friend request successfully',
