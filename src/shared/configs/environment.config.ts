@@ -25,4 +25,10 @@ export const envSchema = {
   REDIS_PASS: Joi.string().required(),
   WORKER_EVENT: Joi.string().required(),
   WORKER_MAIL: Joi.string().required(),
+  PROJECT_ID: Joi.string().required(),
+  PRIVATE_KEY_ID: Joi.string().required(),
+  PRIVATE_KEY: Joi.string().required(),
+  CLIENT_EMAIL: Joi.string().required(),
+  CLIENT_ID: Joi.string().required(),
+  CLIENT_CERT_URL: Joi.string().required(),
 }
