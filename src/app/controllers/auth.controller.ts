@@ -26,7 +26,7 @@ import {
   sendResetPassword,
 } from '../utils'
 import { JwtResponse } from '../typings'
-import { VerifyRequestStatusEnum } from '../../shared/constants'
+import { VerifyRequestStatusEnum, environment } from '../../shared/constants'
 import { sendVerifyEmail } from '../utils'
 
 export class AuthController {
@@ -145,7 +145,7 @@ export class AuthController {
             success: false,
             message:
               'Your account is inactive. If you want to active your account, please click this link.',
-            link: `${process.env.APP_HOST}/users/active?id=${user.id}`,
+            link: `${environment.host}/users/active?id=${user.id}`,
           })
         }
       } else {

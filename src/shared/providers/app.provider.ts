@@ -6,14 +6,13 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import hpp from 'hpp'
 import path from 'path'
-import { Server } from 'socket.io'
 import { serve, setup } from 'swagger-ui-express'
 
 import { errorMiddleware } from '../../app/middlewares'
 import { logger } from '.'
 import { environment } from '../constants'
 import * as routers from '../../app/routers'
-import swaggerDocument from '../../../swagger.json'
+import swaggerDocument from '../../swagger.json'
 
 class AppProvider {
   public app: express.Application
@@ -77,4 +76,3 @@ class AppProvider {
 }
 
 export const appProvider = new AppProvider()
-export const socket = new Server(appProvider.server)

@@ -99,4 +99,14 @@ export class FriendRequestRepository extends Repository<FriendRequest> {
       total,
     }
   }
+
+  public async unfriend(userId: string, targetId: string) {
+    await this.createQueryBuilder('friendRequest')
+      .delete()
+      .from(FriendRequest)
+      .where('(requesterId = :userId AND receiverId = :targetId)')
+      .orWhere('(requesterId = :targetId AND receiverId = :userId)')
+      .setParameters({ userId, targetId })
+      .execute()
+  }
 }

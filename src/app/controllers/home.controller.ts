@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
-import minioClient from '../../shared/configs/minio.config'
 import { StatusCodes } from 'http-status-codes'
-import { GetDeviceIdType, PresignedUrlType } from '../dtos'
 import { generate } from 'generate-password'
+
+import { GetDeviceIdType, PresignedUrlType } from '../dtos'
+import minioClient from '../../shared/configs/minio.config'
+import { environment } from '../../shared/constants'
 import { DeviceRepository } from '../repositories'
 
 export class HomeController {
@@ -26,15 +28,13 @@ export class HomeController {
       })}.${type}`
       const location = `${folder}/${fileName}`
       const presignedUrl = await minioClient.presignedPutObject(
-        process.env.BUCKET_NAME || 'safe-talk',
+        environment.minio.bucketName,
         location,
         5 * 60,
       )
       res.status(StatusCodes.OK).json({
         presignedUrl: presignedUrl.replace('http', 'https'),
-        url: `https://${process.env.MINIO_HOST}/${
-          process.env.BUCKET_NAME || 'safe-talk'
-        }/${location}`,
+        url: `https://${environment.minio.host}/${environment.minio.bucketName}/${location}`,
       })
     } catch (err) {
       next(err)

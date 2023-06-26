@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { Not } from 'typeorm'
+import { In, Not } from 'typeorm'
 
 import {
   ConservationEnum,
@@ -8,7 +8,6 @@ import {
   MessageEncryptTypeEnum,
   MessageTypeEnum,
 } from '../../shared/constants'
-import { socket } from '../../shared/providers'
 import {
   ParticipantRepository,
   MessageRepository,
@@ -22,7 +21,7 @@ import {
   SendMessageDto,
   UpdateConservationSettingDto,
 } from '../dtos'
-import { getPageFromQuery } from '../utils'
+import { addEventJob, getPageFromQuery } from '../utils'
 
 export class ConservationController {
   private messageRepository: MessageRepository
@@ -85,17 +84,27 @@ export class ConservationController {
       )
       const participants = await this.participantRepository.find({
         where: { conservationId: id, userId: Not(userId) },
+        relations: { user: true },
       })
-      socket
-        .to(participants.map((participant) => participant.userId))
-        .emit('message', {
+      await addEventJob({
+        to: participants.map((participant) => participant.userId),
+        eventName: 'message',
+        data: {
           conservationId: id,
           user,
           messageId: mess.id,
           message,
-          messageType,
+          messageType: MessageTypeEnum[messageType],
           encryptType,
-        })
+        },
+        firebaseData: {
+          tokens: participants.map((participant) => participant.user.fcmToken),
+          notification: {
+            title: 'Safe talk',
+            body: `${user.fullName} send you a message!`,
+          },
+        },
+      })
       res.status(StatusCodes.OK).json({ success: true, messageId: mess.id })
     } catch (error) {
       next(error)
@@ -147,20 +156,34 @@ export class ConservationController {
           }),
         ]),
       ])
-      socket
-        .to(
-          participants
-            .filter((participant) => participant.id !== userId)
-            .map((participant) => participant.userId),
-        )
-        .emit('message', {
+      const sendTo = participants.filter(
+        (participant) => participant.userId !== userId,
+      )
+      const participantsWithFcm = await this.participantRepository.find({
+        where: { id: In(sendTo.map((participant) => participant.id)) },
+        relations: { user: true },
+      })
+      await addEventJob({
+        to: sendTo.map((participant) => participant.userId),
+        eventName: 'message',
+        data: {
           conservationId: conservation.id,
           user,
           messageId: mess.id,
           message,
-          messageType,
+          messageType: MessageTypeEnum[messageType],
           encryptType,
-        })
+        },
+        firebaseData: {
+          tokens: participantsWithFcm.map(
+            (participant) => participant.user.fcmToken,
+          ),
+          notification: {
+            title: 'Safe talk',
+            body: `${user.fullName} send you a message!`,
+          },
+        },
+      })
       res.status(StatusCodes.OK).json({
         success: true,
         conservationId: conservation.id,

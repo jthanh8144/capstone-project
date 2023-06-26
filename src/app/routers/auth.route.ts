@@ -7,7 +7,7 @@ import {
   ResetPasswordDto,
   VerifyDto,
 } from '../dtos'
-import { authenticationMiddleware, validationMiddleware } from '../middlewares'
+import { validationMiddleware } from '../middlewares'
 import { AuthController } from '../controllers'
 
 class AuthRoute {
@@ -40,7 +40,6 @@ class AuthRoute {
     this.router
       .route('/logout')
       .post(
-        authenticationMiddleware,
         validationMiddleware(RefreshTokenDto, 'body'),
         this.authController.logout,
       )

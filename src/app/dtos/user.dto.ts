@@ -100,3 +100,8 @@ export class GetConservationWithUser {
   @IsString()
   partnerId: string
 }
+
+export class UpdateFcmTokenDto {
+  @IsString()
+  fcmToken: string
+}
