@@ -26,3 +26,10 @@ export enum VerifyRequestStatusEnum {
   expired = 'expired',
   done = 'done',
 }
+
+export enum CallType {
+  CALL_INITIATED = 'CALL_INITIATED',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  DISCONNECT = 'DISCONNECT',
+}

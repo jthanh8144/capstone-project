@@ -35,4 +35,12 @@ export const environment = {
     event: process.env.WORKER_EVENT || 'event-queue',
     mail: process.env.WORKER_MAIL || 'mail-queue',
   },
+  firebase: {
+    projectId: process.env.PROJECT_ID,
+    privateKeyId: process.env.PRIVATE_KEY_ID,
+    privateKey: process.env.PRIVATE_KEY,
+    clientEmail: process.env.CLIENT_EMAIL,
+    clientId: process.env.CLIENT_ID,
+    clientCertUrl: process.env.CLIENT_CERT_URL,
+  },
 }

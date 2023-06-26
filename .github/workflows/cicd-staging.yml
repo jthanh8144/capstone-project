@@ -29,6 +29,12 @@ jobs:
           echo REDIS_PASS=${{ secrets.REDIS_PASS }} >> .env
           echo WORKER_EVENT=${{ secrets.WORKER_EVENT_STAGING }} >> .env
           echo WORKER_MAIL=${{ secrets.WORKER_MAIL_STAGING }} >> .env
+          echo PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} >> .env
+          echo PRIVATE_KEY_ID=${{ secrets.FIREBASE_PRIVATE_KEY_ID }} >> .env
+          echo PRIVATE_KEY=${{ secrets.FIREBASE_PRIVATE_KEY }} >> .env
+          echo CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }} >> .env
+          echo CLIENT_ID=${{ secrets.FIREBASE_CLIENT_ID }} >> .env
+          echo CLIENT_CERT_URL=${{ secrets.FIREBASE_CLIENT_CERT_URL }} >> .env
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
