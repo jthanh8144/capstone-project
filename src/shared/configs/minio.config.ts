@@ -1,11 +1,12 @@
 import { Client } from 'minio'
+import { environment } from '../constants'
 
 const minioClient = new Client({
-  endPoint: process.env.MINIO_HOST,
-  port: +process.env.MINIO_PORT,
+  endPoint: environment.minio.host,
+  port: environment.minio.port,
   useSSL: false,
-  accessKey: process.env.MINIO_USER,
-  secretKey: process.env.MINIO_PASSWORD,
+  accessKey: environment.minio.user,
+  secretKey: environment.minio.password,
 })
 
 export default minioClient

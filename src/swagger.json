@@ -6,7 +6,7 @@
     "contact": {
       "email": "thanhvo618@gmail.com"
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "servers": [
     {
@@ -35,6 +35,10 @@
     {
       "name": "friend-requests",
       "description": "API for friend request"
+    },
+    {
+      "name": "conservations",
+      "description": "API for conservations"
     }
   ],
   "paths": {
@@ -125,6 +129,66 @@
             "bearer": []
           }
         ]
+      }
+    },
+    "/devices": {
+      "get": {
+        "tags": [
+          "general"
+        ],
+        "summary": "Get ID of the device",
+        "description": "Get ID of the device in API server",
+        "operationId": "device",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "query",
+            "description": "unique ID of the device",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deviceId": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entity error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/auth/register": {
@@ -689,8 +753,15 @@
             "description": "email or name of the user",
             "schema": {
               "type": "string"
-            },
-            "required": true
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page of data",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -699,9 +770,31 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "messages",
+                    "totalPage"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    },
+                    "nextPage": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "totalPage": {
+                      "type": "number",
+                      "example": 2
+                    }
                   }
                 }
               }
@@ -1034,6 +1127,24 @@
         "summary": "Get list friends of the user",
         "description": "Get list friends of the user",
         "operationId": "userFriends",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name or email of the user to search",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -1041,6 +1152,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "success",
+                    "friends",
+                    "totalPage"
+                  ],
                   "properties": {
                     "success": {
                       "type": "boolean",
@@ -1051,6 +1167,14 @@
                       "items": {
                         "$ref": "#/components/schemas/User"
                       }
+                    },
+                    "nextPage": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "totalPage": {
+                      "type": "number",
+                      "example": 2
                     }
                   }
                 }
@@ -1264,6 +1388,383 @@
             }
           }
         }
+      }
+    },
+    "/users/conservations": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get list conservations of the user",
+        "description": "Get list conservations of the user",
+        "operationId": "userConservations",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "conservations",
+                    "totalPage"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "conservations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Conservation"
+                      }
+                    },
+                    "nextPage": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "totalPage": {
+                      "type": "number",
+                      "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/conservations/{partnerId}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get the conservation with partnerId",
+        "description": "Get the conservation with partnerId",
+        "operationId": "conservationWith",
+        "parameters": [
+          {
+            "name": "partnerId",
+            "in": "path",
+            "required": true,
+            "description": "partner ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "existed"
+                  ],
+                  "properties": {
+                    "existed": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "conservation": {
+                      "$ref": "#/components/schemas/Conservation"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/signal": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Upload signal key",
+        "description": "Upload signal key",
+        "operationId": "signalKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "registrationId": {
+                    "type": "number"
+                  },
+                  "ikPublicKey": {
+                    "type": "string"
+                  },
+                  "spkKeyId": {
+                    "type": "number"
+                  },
+                  "spkPublicKey": {
+                    "type": "string"
+                  },
+                  "spkSignature": {
+                    "type": "string"
+                  },
+                  "pkKeyId": {
+                    "type": "number"
+                  },
+                  "pkPublicKey": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/fcm": {
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Upload FCM token",
+        "description": "Upload FCM token",
+        "operationId": "fcm",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fcmToken": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/unfriend/{userId}": {
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Unfriend with userId",
+        "description": "Unfriend with userId",
+        "operationId": "unfriend",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "partner ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
       }
     },
     "/friend-requests": {
@@ -1564,6 +2065,16 @@
         "summary": "Get list sended friend requests",
         "description": "Get list sended friend requests",
         "operationId": "sendedFriendRequests",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -1571,6 +2082,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "success",
+                    "friendRequests",
+                    "totalPage"
+                  ],
                   "properties": {
                     "success": {
                       "type": "boolean",
@@ -1581,6 +2097,14 @@
                       "items": {
                         "$ref": "#/components/schemas/FriendRequestWithUser"
                       }
+                    },
+                    "nextPage": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "totalPage": {
+                      "type": "number",
+                      "example": 2
                     }
                   }
                 }
@@ -1623,6 +2147,121 @@
         "summary": "Get list received friend requests",
         "description": "Get list received friend requests",
         "operationId": "receivedFriendRequests",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "friendRequests",
+                    "totalPage"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "friendRequests": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/FriendRequestWithUser"
+                      }
+                    },
+                    "nextPage": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "totalPage": {
+                      "type": "number",
+                      "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/conservations": {
+      "post": {
+        "tags": [
+          "conservations"
+        ],
+        "summary": "Create conservation",
+        "description": "Create conservation",
+        "operationId": "createConservation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "receiverId": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "messageType": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "image",
+                      "video",
+                      "another"
+                    ]
+                  },
+                  "encryptType": {
+                    "type": "number",
+                    "enum": [
+                      1,
+                      3
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -1635,11 +2274,355 @@
                       "type": "boolean",
                       "example": true
                     },
-                    "friendRequests": {
+                    "conservationId": {
+                      "type": "string"
+                    },
+                    "messageId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/conservations/{id}": {
+      "get": {
+        "tags": [
+          "conservations"
+        ],
+        "summary": "Get messages of the conservation",
+        "description": "Get messages of the conservation",
+        "operationId": "detailConservation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the conservation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "messages",
+                    "totalPage"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "messages": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/FriendRequestWithUser"
+                        "$ref": "#/components/schemas/Message"
                       }
+                    },
+                    "nextPage": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "totalPage": {
+                      "type": "number",
+                      "example": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "conservations"
+        ],
+        "summary": "Send message in the conservation",
+        "description": "Send message in the conservation",
+        "operationId": "sendMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the conservation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "messageType": {
+                    "type": "string",
+                    "enum": [
+                      "text",
+                      "image",
+                      "video",
+                      "another"
+                    ]
+                  },
+                  "encryptType": {
+                    "type": "number",
+                    "enum": [
+                      1,
+                      3
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "messageId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/conservations/{id}/settings": {
+      "get": {
+        "tags": [
+          "conservations"
+        ],
+        "summary": "Get settings of the conservation",
+        "description": "Get settings of the conservation",
+        "operationId": "conservationSetting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the conservation",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "setting"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "setting": {
+                      "$ref": "#/components/schemas/ConservationSetting"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/conservations/settings/{id}": {
+      "put": {
+        "tags": [
+          "conservations"
+        ],
+        "summary": "Update settings of the conservation",
+        "description": "Update settings of the conservation",
+        "operationId": "updateConservationSetting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the conservation setting",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isMuted": {
+                    "type": "boolean"
+                  },
+                  "isRemoved": {
+                    "type": "boolean"
+                  },
+                  "isArchived": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
                     }
                   }
                 }
@@ -1805,6 +2788,129 @@
           },
           "receiver": {
             "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "SignalStore": {
+        "type": "object",
+        "properties": {
+          "registrationId": {
+            "type": "string"
+          },
+          "ikPublicKey": {
+            "type": "string"
+          },
+          "spkKeyId": {
+            "type": "number"
+          },
+          "spkPublicKey": {
+            "type": "string"
+          },
+          "spkSignature": {
+            "type": "string"
+          },
+          "pkKeyId": {
+            "type": "number"
+          },
+          "pkPublicKey": {
+            "type": "string"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "messageType": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "video",
+              "another"
+            ]
+          },
+          "encryptType": {
+            "type": "number",
+            "enum": [
+              1,
+              3
+            ]
+          },
+          "conservationId": {
+            "type": "string"
+          },
+          "isRemoved": {
+            "type": "boolean"
+          },
+          "sender": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "avatarUrl": {
+                "type": "string"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2023-06-07T04:18:45.998Z"
+          }
+        }
+      },
+      "ConservationSetting": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isMuted": {
+            "type": "boolean"
+          },
+          "isRemoved": {
+            "type": "boolean"
+          },
+          "isArchived": {
+            "type": "boolean"
+          },
+          "autoRemoveAfter": {
+            "type": "number"
+          },
+          "conservationId": {
+            "type": "string"
+          }
+        }
+      },
+      "Conservation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "signal": {
+            "$ref": "#/components/schemas/SignalStore"
+          },
+          "latestMessage": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "setting": {
+            "$ref": "#/components/schemas/ConservationSetting"
           }
         }
       }

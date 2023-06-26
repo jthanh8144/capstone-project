@@ -21,7 +21,6 @@ WORKDIR /home/app
 COPY --from=builder /home/app/package.json ./
 COPY --from=builder /home/app/yarn.lock ./
 COPY --from=builder /home/app/.env ./
-COPY --from=builder /home/app/swagger.json ./
 COPY --from=builder /home/app/dist ./dist
 COPY --from=builder /home/app/public ./public
 

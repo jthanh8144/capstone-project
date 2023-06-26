@@ -1,12 +1,13 @@
 {
   "name": "capstone-project-be",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "the source code init in 2023/04/10",
   "main": "index.js",
   "author": "jthanh8144",
   "license": "ISC",
+  "private": true,
   "scripts": {
-    "start": "node dist/src/main.js",
+    "start": "node dist/main.js",
     "dev": "nodemon --legacy-watch",
     "build": "rm -rf dist && tsc --project tsconfig.json",
     "prepare": "husky install",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
+    "bull": "4.10.4",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.0",
     "compression": "1.7.4",
@@ -28,6 +30,7 @@
     "cors": "2.8.5",
     "dotenv": "16.0.3",
     "express": "4.18.2",
+    "firebase-admin": "11.8.0",
     "generate-password": "1.7.0",
     "hpp": "0.2.3",
     "http-errors": "2.0.0",
@@ -38,7 +41,6 @@
     "nodemailer": "6.9.1",
     "pg": "8.10.0",
     "reflect-metadata": "0.1.13",
-    "socket.io": "4.6.1",
     "swagger-ui-express": "4.6.2",
     "typeorm": "0.3.14",
     "winston": "3.8.2"
@@ -67,7 +69,6 @@
     "nodemon": "2.0.22",
     "prettier": "2.8.7",
     "ts-node": "10.9.1",
-    "tsc-alias": "1.8.5",
     "typescript": "5.0.4"
   }
 }
