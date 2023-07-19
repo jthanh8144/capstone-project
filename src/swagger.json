@@ -13,7 +13,7 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://safe-talk-stg.jthanh8144.studio"
+      "url": "https://safe-talk-dev.jthanh8144.studio"
     },
     {
       "url": "https://safe-talk.jthanh8144.studio"
@@ -39,6 +39,10 @@
     {
       "name": "conservations",
       "description": "API for conservations"
+    },
+    {
+      "name": "call",
+      "description": "API for calling feature"
     }
   ],
   "paths": {
@@ -2623,6 +2627,196 @@
                     },
                     "message": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/call": {
+      "post": {
+        "tags": [
+          "call"
+        ],
+        "summary": "Create call",
+        "description": "Create call",
+        "operationId": "createCall",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "receiverId",
+                  "meetingId",
+                  "callerName"
+                ],
+                "properties": {
+                  "receiverId": {
+                    "type": "string"
+                  },
+                  "meetingId": {
+                    "type": "string"
+                  },
+                  "callerName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Create call successfully!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "The user hasn't FCM token!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "call"
+        ],
+        "summary": "Update call",
+        "description": "Update call",
+        "operationId": "updateCall",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId",
+                  "type"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "CALL_INITIATED",
+                      "ACCEPTED",
+                      "REJECTED",
+                      "DISCONNECT"
+                    ]
+                  },
+                  "meetingId": {
+                    "type": "string"
+                  },
+                  "callerName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Update call successfully!"
                     }
                   }
                 }
