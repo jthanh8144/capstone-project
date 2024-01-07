@@ -81,4 +81,4 @@ jobs:
 
       # - name: SSH to server
       #   run: |
-      #     sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no hana-server './ci-cd/safe-talk-staging.sh'
+      #     sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no hana-server './hana-server/ci-cd/safe-talk-staging.sh'
