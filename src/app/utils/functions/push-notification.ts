@@ -17,11 +17,13 @@ export const pushNotification = async (
   },
 ) => {
   const message = getMessaging()
-  await Promise.all(
-    tokens.map((token) => {
-      if (token) {
-        message.send({ token, ...options })
-      }
-    }),
-  )
+  switch (tokens.length) {
+    case 0:
+      break
+    case 1:
+      await message.send({ token: tokens[0], ...options })
+      break
+    default:
+      await message.sendEachForMulticast({ tokens, ...options })
+  }
 }

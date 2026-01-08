@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import { Response, NextFunction } from 'express'
 import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 
-import { verifyToken } from '../utils'
+import { verifyToken } from '../utils/functions'
 import { AuthRequest, JwtResponse } from '../typings'
 
 const authenticationMiddleware = (

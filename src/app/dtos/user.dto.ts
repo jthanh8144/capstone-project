@@ -6,7 +6,7 @@ import {
   Matches,
   IsNumber,
 } from 'class-validator'
-import { passwordRegex } from '../utils'
+import { passwordRegex } from '../utils/constants'
 
 export class CreateUserDto {
   @IsEmail()

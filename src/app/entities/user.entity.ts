@@ -49,7 +49,7 @@ export class User extends BaseEntity {
   isOnline: boolean
 
   @Column({ name: 'fcm_token', nullable: true })
-  fcmToken: string
+  fcmToken: string | null
 
   @CreateDateColumn({
     name: 'created_at',

@@ -21,7 +21,11 @@ import {
   UpdatePasswordDto,
   UpdateUserDto,
 } from '../dtos'
-import { comparePassword, getPageFromQuery, hashPassword } from '../utils'
+import {
+  comparePassword,
+  getPageFromQuery,
+  hashPassword,
+} from '../utils/functions'
 import {
   handleConservationWith,
   handleSearchUsers,

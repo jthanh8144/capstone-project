@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
-import { StatusCodes } from 'http-status-codes'
 import { generate } from 'generate-password'
+import { StatusCodes } from 'http-status-codes'
 
 import { GetDeviceIdType, PresignedUrlType } from '../dtos'
-import minioClient from '../../shared/configs/minio.config'
-import { environment } from '../../shared/constants'
 import { DeviceRepository } from '../repositories'
+import { generatePresignedUrl } from '../utils/functions'
 
 export class HomeController {
   public home = async (req: Request, res: Response): Promise<void> => {
@@ -23,19 +22,13 @@ export class HomeController {
         res.json({})
         return
       }
-      const fileName = `${Date.now()}_${folder}_${generate({
-        length: 6,
-      })}.${type}`
+      const fileName = `${Date.now()}_${generate({ length: 8 })}.${type}`
       const location = `${folder}/${fileName}`
-      const presignedUrl = await minioClient.presignedPutObject(
-        environment.minio.bucketName,
+      const { presignedUrl, fileUrl } = await generatePresignedUrl(
         location,
         5 * 60,
       )
-      res.status(StatusCodes.OK).json({
-        presignedUrl: presignedUrl.replace('http', 'https'),
-        url: `https://${environment.minio.host}/${environment.minio.bucketName}/${location}`,
-      })
+      res.status(StatusCodes.OK).json({ presignedUrl, url: fileUrl })
     } catch (err) {
       next(err)
     }

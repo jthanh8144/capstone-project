@@ -21,7 +21,7 @@ import {
   SendMessageDto,
   UpdateConservationSettingDto,
 } from '../dtos'
-import { addEventJob, getPageFromQuery } from '../utils'
+import { addEventJob, getPageFromQuery } from '../utils/functions'
 
 export class ConservationController {
   private messageRepository: MessageRepository
@@ -98,7 +98,9 @@ export class ConservationController {
           encryptType,
         },
         firebaseData: {
-          tokens: participants.map((participant) => participant.user.fcmToken),
+          tokens: participants
+            .map((participant) => participant.user.fcmToken)
+            .filter((token) => !!token),
           notification: {
             title: 'Safe talk',
             body: `${user.fullName} send you a message!`,
@@ -175,9 +177,9 @@ export class ConservationController {
           encryptType,
         },
         firebaseData: {
-          tokens: participantsWithFcm.map(
-            (participant) => participant.user.fcmToken,
-          ),
+          tokens: participantsWithFcm
+            .map((participant) => participant.user.fcmToken)
+            .filter((token) => !!token),
           notification: {
             title: 'Safe talk',
             body: `${user.fullName} send you a message!`,
