@@ -5,7 +5,7 @@ import { CreateFriendRequestDto, UpdateStatusFriendRequestDto } from '../dtos'
 import { FriendRequestRepository } from '../repositories'
 import { FriendEnum, LIMIT_USER_SELECTED } from '../../shared/constants'
 import { AuthRequest } from '../typings'
-import { addEventJob, getPageFromQuery } from '../utils'
+import { addEventJob, getPageFromQuery } from '../utils/functions'
 
 export class FriendRequestController {
   private friendRequestRepository: FriendRequestRepository

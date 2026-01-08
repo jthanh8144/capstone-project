@@ -1,5 +1,7 @@
 import { sign, verify } from 'jsonwebtoken'
-import { environment } from '../../shared/constants'
+import type { StringValue } from 'ms'
+
+import { environment } from '../../../shared/constants'
 
 interface TokenData {
   userId: string
@@ -14,7 +16,7 @@ const getToken = (data: TokenData, isRefresh?: boolean) => {
     ? environment.jwt.refreshTokenLife
     : environment.jwt.accessTokenLife
 
-  return sign(data, secret, { expiresIn })
+  return sign(data, secret, { expiresIn: expiresIn as StringValue })
 }
 
 const verifyToken = (token: string, isRefresh?: boolean) => {

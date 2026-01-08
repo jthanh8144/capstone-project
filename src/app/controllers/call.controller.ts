@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import { CreateCallDto, UpdateCallDto } from './../dtos'
 import { CallType } from '../../shared/constants'
 import { UserRepository } from '../repositories'
-import { pushNotification } from '../utils'
+import { pushNotification } from '../utils/functions'
 import { AuthRequest } from '../typings'
 
 export class CallController {
@@ -24,6 +24,7 @@ export class CallController {
       const { receiverId, meetingId, callerName }: CreateCallDto = req.body
       const { fcmToken } = await this.userRepository.findOne({
         where: { id: receiverId },
+        select: ['fcmToken'],
       })
       if (fcmToken) {
         await pushNotification([fcmToken], {
@@ -59,6 +60,7 @@ export class CallController {
       const { userId, type, meetingId, callerName }: UpdateCallDto = req.body
       const { fcmToken } = await this.userRepository.findOne({
         where: { id: userId },
+        select: ['fcmToken'],
       })
       if (fcmToken) {
         const data = {

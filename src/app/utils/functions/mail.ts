@@ -1,12 +1,12 @@
-import { SendMailOptions } from 'nodemailer'
-import { environment } from '../../shared/constants'
+import type { SendMailOptions } from 'nodemailer'
+import { environment } from '../../../shared/constants'
 import { addMailJob } from './worker'
 
 export const sendVerifyEmail = (email: string, verifyId: string) => {
   const verifyLink = `${environment.host}/auth/verify?id=${verifyId}`
   const data: SendMailOptions = {
     to: email,
-    from: environment.mail.user,
+    from: environment.mail.from,
     subject: 'Email confirmation',
     text: `Please visit my website through link ${verifyLink} to verify your email.`,
     html: `Press <a href="${verifyLink}" style="color: red">HERE</a> to verify your email.`,
@@ -17,7 +17,7 @@ export const sendVerifyEmail = (email: string, verifyId: string) => {
 export const sendVerifyCode = (email: string, code: string) => {
   const data: SendMailOptions = {
     to: email,
-    from: environment.mail.user,
+    from: environment.mail.from,
     subject: 'Verify code in Safe Talk',
     text: `Your verify code is ${code}`,
     html: `Your verify code is <span style="color: red; font-size: 20px">${code}</span>.`,
@@ -28,7 +28,7 @@ export const sendVerifyCode = (email: string, code: string) => {
 export const sendResetPassword = (email: string, password: string) => {
   const data: SendMailOptions = {
     to: email,
-    from: environment.mail.user,
+    from: environment.mail.from,
     subject: 'Reset password in Safe Talk',
     text: `Your new password is ${password}`,
     html: `Your new password is <span style="color: red; font-size: 20px">${password}</span>.`,

@@ -13,29 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Create environment file
-        run: |
-          cp example.env .env
-          echo APP_HOST=${{ secrets.APP_HOST_PRODUCTION }} >> .env
-          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-          echo DB_NAME=${{ secrets.DB_NAME_PRODUCTION }} >> .env
-          echo DB_PASS=${{ secrets.DB_PASS }} >> .env
-          echo DB_USER=${{ secrets.DB_USER }} >> .env
-          echo MAIL_USER=${{ secrets.MAIL_USER }} >> .env
-          echo MINIO_USER=${{ secrets.MINIO_USER }} >> .env
-          echo MINIO_PASSWORD=${{ secrets.MINIO_PASSWORD }} >> .env
-          echo BUCKET_NAME=${{ secrets.MINIO_BUCKET_NAME_PRODUCTION }} >> .env
-          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
-          echo REDIS_PASS=${{ secrets.REDIS_PASS }} >> .env
-          echo WORKER_EVENT=${{ secrets.WORKER_EVENT }} >> .env
-          echo WORKER_MAIL=${{ secrets.WORKER_MAIL }} >> .env
-          echo PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} >> .env
-          echo PRIVATE_KEY_ID=${{ secrets.FIREBASE_PRIVATE_KEY_ID }} >> .env
-          echo PRIVATE_KEY=${{ secrets.FIREBASE_PRIVATE_KEY }} >> .env
-          echo CLIENT_EMAIL=${{ secrets.FIREBASE_CLIENT_EMAIL }} >> .env
-          echo CLIENT_ID=${{ secrets.FIREBASE_CLIENT_ID }} >> .env
-          echo CLIENT_CERT_URL=${{ secrets.FIREBASE_CLIENT_CERT_URL }} >> .env
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -81,4 +58,4 @@ jobs:
 
       - name: SSH to server
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no hana-server './hana-server/ci-cd/safe-talk.sh'
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no hana-server './hana-server/ci-cd/safe-talk/back-end.sh'

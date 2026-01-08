@@ -16,7 +16,8 @@ export const environment = {
     refreshTokenLife: process.env.REFRESH_TOKEN_LIFE || '7d',
   },
   mail: {
-    user: process.env.MAIL_USER,
+    from:
+      process.env.MAIL_FROM || 'No Reply <noreply.safe-talk@jthanh8144.top>',
   },
   minio: {
     user: process.env.MINIO_USER,
@@ -25,6 +26,14 @@ export const environment = {
     port: +(process.env.MINIO_PORT ?? 9000),
     bucketName: process.env.BUCKET_NAME || 'safe-talk',
     bucketRegion: process.env.BUCKET_REGION,
+  },
+  s3: {
+    accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+    bucketName: process.env.S3_BUCKET_NAME ?? '',
+    region: process.env.S3_REGION_NAME ?? '',
+    cloudFrontUrl: process.env.S3_CLOUD_FRONT_URL ?? '',
+    endpoint: process.env.S3_ENDPOINT,
   },
   redis: {
     host: process.env.REDIS_HOST,

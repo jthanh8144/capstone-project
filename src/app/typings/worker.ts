@@ -1,4 +1,4 @@
-import { SendMailOptions } from 'nodemailer'
+import type { SendMailOptions } from 'nodemailer'
 import {
   FriendEnum,
   MessageEncryptTypeEnum,

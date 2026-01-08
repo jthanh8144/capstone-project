@@ -1,8 +1,9 @@
-import { StatusCodes } from 'http-status-codes'
 import { NextFunction, Request, Response } from 'express'
-import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken'
 import { generate } from 'generate-password'
+import { StatusCodes } from 'http-status-codes'
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
 
+import { VerifyRequestStatusEnum, environment } from '../../shared/constants'
 import {
   CreateUserDto,
   LoginDto,
@@ -16,18 +17,17 @@ import {
   VerifyCodeRepository,
   VerifyRequestRepository,
 } from '../repositories'
-import {
-  comparePassword,
-  hashPassword,
-  getToken,
-  verifyToken,
-  addDays,
-  sendVerifyCode,
-  sendResetPassword,
-} from '../utils'
 import { JwtResponse } from '../typings'
-import { VerifyRequestStatusEnum, environment } from '../../shared/constants'
-import { sendVerifyEmail } from '../utils'
+import {
+  addDays,
+  comparePassword,
+  getToken,
+  hashPassword,
+  sendResetPassword,
+  sendVerifyCode,
+  sendVerifyEmail,
+  verifyToken,
+} from '../utils/functions'
 
 export class AuthController {
   private userRepository: UserRepository

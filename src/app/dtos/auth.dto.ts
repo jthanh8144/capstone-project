@@ -1,5 +1,5 @@
 import { IsEmail, IsString, MinLength, Matches } from 'class-validator'
-import { passwordRegex } from '../utils'
+import { passwordRegex } from '../utils/constants'
 
 export class LoginDto {
   @IsEmail()
